@@ -1,0 +1,74 @@
+2015-04-24
+1.3.0
+	1.重构
+	
+2014-06-21
+1.2.0
+	1.移植cn.featherfly
+2013-11-11
+1.1.5
+	1.重新打包，使ConstantPool可以在JSP中使用
+
+2013-09-04
+1.1.4
+	1.加入devMode参数
+
+2013-07-13
+1.1.3
+	1.修正JsonParser空指针异常
+	2.修正AbstractIterableParser，在目标对象为数组或集合时，只有单个值报错的问题
+
+2013-07-06
+1.1.2
+	1.加入AbstractIterableParser抽象类，实现数组的配置的基本支持
+	2.ClassParser,ConstantParsr实现BeanPropertyParser接口，实现数组和集合的转换
+		只需要把多个值用逗号隔开即可
+
+
+2013-03-27
+1.1.1
+	1.取值时，如果为空，则不调用类型转换
+
+2012-12-28 1.1.0
+	1.加入parse包，支持带有协议的数据设置，本组件自带class:和constant:和json:支持
+	<constants class="com.thgk.Role">
+		1.class支持
+			代表new一个对象赋值
+			<constant name="user" value="class:com.thgk.User"/>
+
+		2.constant支持
+			1.代表从constant中查找指定类赋值
+			<constant name="user" value="constant:com.thgk.User"/>
+			2.代表从constant中查找指定类并使用指定属性赋值
+			<constant name="name" value="constant:cn.featherfly.test.ConstantTest#name"/>
+
+		3.JSON支持
+			1.代表从使用JSON组装类型为com.thgk.User对象,注意#后面不能有空格，并且要跟JSON的解析符号，即#{和#[
+			<constant name="user">
+				json:com.thgk.User#{
+					name : yufei,
+					age : 20
+				}
+			</constant>
+			2.代表从使用JSON组装user对应类型的对象
+			<constant name="user">
+				json:{
+					name : yufei,
+					age : 20
+				}
+			</constant>
+	</constants>
+	2.支持<constant name="user">class:com.thgk.User</constant>写法
+
+2011-3-9 1.0.2
+	1.加入init(Set<MetadataReader> metaSet)，如果设置了指定的metaSet将不再自己扫描
+	  如果metaSet为null将使用basePackage继续扫描
+	2.类属性常量加入数组支持
+	3.字符串属性basePackage改为字符串数组basePackages，加入多包搜索支持，多个包使用逗号隔开
+
+2011-11-1 1.0.1
+	1.取消ConstantPool.addConstant的public访问级别
+	2.移动ConstantConfigurate的包位置，
+
+2010-12-27 1.0.0
+发布，支持可配置常量和信息查找

@@ -1,0 +1,10 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src"]
+        }
+    }
+}
+jar {
+    manifest.attributes 'Build-Name': archivesBaseName
+}
