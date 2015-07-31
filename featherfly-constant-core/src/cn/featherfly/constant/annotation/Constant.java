@@ -19,7 +19,7 @@ public @interface Constant {
      * <p>
      * 该常量的描述.
      * </p>
-     * @return
+     * @return 描述
      */
     String value();
 }

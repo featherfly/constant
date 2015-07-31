@@ -19,7 +19,7 @@ public @interface ConstantClass {
      * <p>
      * 该常量类的描述.
      * </p>
-     * @return
+     * @return 描述
      */
     String value();
 }
