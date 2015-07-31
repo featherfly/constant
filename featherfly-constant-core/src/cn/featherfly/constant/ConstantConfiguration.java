@@ -22,7 +22,7 @@ import cn.featherfly.common.bean.BeanDescriptor;
 import cn.featherfly.common.bean.BeanProperty;
 import cn.featherfly.common.bean.BeanUtils;
 import cn.featherfly.common.bean.NoSuchPropertyException;
-import cn.featherfly.common.bean.condition.BeanPropertyAnnotationMatcher;
+import cn.featherfly.common.bean.matcher.BeanPropertyAnnotationMatcher;
 import cn.featherfly.common.io.ClassPathScanningProvider;
 import cn.featherfly.common.lang.ArrayUtils;
 import cn.featherfly.common.lang.ClassLoaderUtils;
@@ -298,7 +298,7 @@ public final class ConstantConfiguration {
                 throw new ConstantException(String.format("常量配置类%s的属性%s不是只读，请去掉set方法",
                         className, name));
             }
-            Constant constantAnnotation = property.getField().getAnnotation(Constant.class);
+            Constant constantAnnotation = property.getAnnotation(Constant.class);
             if (constantAnnotation == null) {
                 throw new ConstantException(String.format("常量配置类%s的属性%s没有被@%s注解修饰",
                         className, name, Constant.class.getSimpleName()));
