@@ -1,0 +1,53 @@
+<ivy-module version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd"
+	xmlns:m="http://ant.apache.org/ivy/maven">
+	<info organisation="cn.featherfly" module="featherfly-constant-test"
+		status="release" />
+	<configurations>
+		<conf name="master" visibility="public"
+			description="contains only the artifact published by this module itself, with no transitive dependencies" />
+		<!--
+			<conf name="sources" visibility="public"
+			description="this configuration contains the source artifact of this module, if any." />
+			<conf name="javadoc" visibility="public"
+			description="this configuration contains the javadoc artifact of this module, if any." />
+		-->
+	</configurations>
+	<publications>
+		<artifact name="featherfly-constant-test" type="jar" ext="jar"
+			conf="master" />
+		<!--
+			<artifact name="Tghk-ConfigurableConstant" type="source" ext="jar"
+			conf="sources" m:classifier="sources" />
+			<artifact name="Tghk-ConfigurableConstant" type="javadoc" ext="jar"
+			conf="javadoc" m:classifier="javadoc" />
+		-->
+	</publications>
+	<dependencies>
+		<dependency org="dom4j" name="dom4j" rev="1.6.1"
+			transitive="false" />
+		<dependency org="commons-logging" name="commons-logging" rev="1.1.1"
+			transitive="false" />
+		<dependency org="log4j" name="log4j" rev="1.2.16"
+    		transitive="false"/>
+    	<dependency org="org.aspectj" name="aspectjweaver" rev="1.6.12"
+			transitive="false"/>
+    	<!--
+		<dependency org="cn.featherfly" name="featherfly-constant" rev="1.0.2"/>
+    	-->
+		<dependency org="cn.featherfly" name="featherfly-common" rev="1.1.1"/>
+		<dependency org="cn.featherfly" name="featherfly-scope" rev="1.0.0"
+			transitive="false" />
+		<dependency org="dom4j" name="dom4j" rev="1.6.1"
+			transitive="false" />
+		<dependency org="org.springframework" name="org.springframework.beans" rev="3.1.1.RELEASE"
+        	transitive="true"/>
+		<dependency org="org.springframework" name="org.springframework.asm" rev="3.1.1.RELEASE"
+        	transitive="true"/>
+         <dependency org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.5"
+			transitive="true"/>
+		<dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.9.5"
+			transitive="true"/>
+	</dependencies>
+</ivy-module>

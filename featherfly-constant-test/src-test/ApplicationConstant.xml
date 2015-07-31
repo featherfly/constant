@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+	<constants class="cn.featherfly.constant.configuration.ConstantParameter">
+		<constant name="basePackeges" value="cn.featherfly,org.yufei"/>
+		<constant name="reParse" value="true"/>
+		<constant name="parsers">
+			cn.featherfly.conversion.parse.ClassParser
+			,cn.featherfly.conversion.parse.JsonBeanPropertyParser
+			,cn.featherfly.constant.parse.ConstantParser
+		</constant>
+	</constants>
+	<constants class="org.yufei.Role">
+        <constant name="user" value="class:org.yufei.User"/>
+        <!-- <constant name="user" value="constant:org.yufei.User"/> -->
+        <constant name="name" value="constant:cn.featherfly.constant.test.ConstantTest#name"/>
+    </constants>
+	<constants class="cn.featherfly.constant.test.ConstantTest">
+		<constant name="name" value="羽飞"/>
+		<constant name="age" value="28"/>
+		<constant name="is" value="true"/>
+	</constants>
+	<constants class="org.yufei.User">
+		<constant name="name" value="清华"/>
+	</constants>
+	
+	<constants class="org.yufei.Role2">
+		<constant name="name" value="constant:cn.featherfly.constant.test.ConstantTest#name"/>
+		<constant name="user" value="constant:org.yufei.User"/>
+		<constant name="person">
+			json:{
+				"name" : "p1",
+				"age" : 10
+			}
+		</constant>
+		<constant name="persons">
+			json:[{
+				"name" : "p_array_1",
+				"age" : 21
+			},{
+				"name" : "p_array_2",
+				"age" : 22
+			}]
+		</constant>
+		<constant name="personList">
+			json:[{
+				"name" : "p_list_1",
+				"age" : 31
+			},{
+				"name" : "p_list_2",
+				"age" : 32
+			}]
+		</constant>
+		<constant name="personMap">
+			json:{
+				"m1" : {
+					"name" : "p_map_1",
+					"age" : 31
+				}, "m2" : {
+					"name" : "p_map_2",
+					"age" : 32
+				}
+			}
+		</constant>
+		<constant name="actor">
+			json:org.yufei.Person#{
+				"name" : "actor1"
+			}
+		</constant>
+		<constant name="actors">
+			json:org.yufei.Person#[{
+				"name" : "actors1"
+			},{
+				"name" : "actors2"
+			}]
+		</constant>
+		<constant name="actorList">
+			json:org.yufei.Person#[{
+				"name" : "actorList1"
+			},{
+				"name" : "actorList2"
+			}]
+		</constant>		
+        <!-- 		
+		<constant name="persons" value="constant:org.yufei.User"/>
+		<constant name="personList" value="constant:org.yufei.User"/>
+		 -->
+	</constants>
+</application>

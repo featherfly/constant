@@ -1,0 +1,3 @@
+rootProject.name = 'featherfly-constant-test'
+includeFlat 'featherfly-constant-core'
+includeFlat 'featherfly-constant-spring'
