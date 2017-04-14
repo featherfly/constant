@@ -2,6 +2,8 @@
 <application>
 	<constants class="cn.featherfly.constant.configuration.ConstantParameter">
 		<constant name="basePackeges" value="cn.featherfly,org.yufei"/>
+<!-- 		<constant name="configFiles" value="ApplicationConstant.xml,Constant.xml"/> -->
+		<constant name="configFiles" value="ApplicationConstant.xml,Constant.yaml"/>
 		<constant name="reParse" value="true"/>
 		<constant name="parsers">
 			cn.featherfly.conversion.parse.ClassParser
@@ -18,9 +20,6 @@
 		<constant name="name" value="羽飞"/>
 		<constant name="age" value="28"/>
 		<constant name="is" value="true"/>
-	</constants>
-	<constants class="org.yufei.User">
-		<constant name="name" value="清华"/>
 	</constants>
 	
 	<constants class="org.yufei.Role2">

@@ -1,0 +1,24 @@
+<ivy-module version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd"
+	xmlns:m="http://ant.apache.org/ivy/maven">
+	<info organisation="cn.featherfly" module="featherfly-constant-scope"
+		status="release" />
+	<configurations>
+		<conf name="master" visibility="public"
+			description="contains only the artifact published by this module itself, with no transitive dependencies" />
+		<conf name="sources" visibility="public"
+			description="this configuration contains the source artifact of this module, if any." />
+		<conf name="javadoc" visibility="public"
+			description="this configuration contains the javadoc artifact of this module, if any." />
+	</configurations>
+	<publications>
+		<artifact name="featherfly-constant-scope" type="jar" ext="jar" conf="master" />
+		<artifact name="featherfly-constant-scope" type="javadoc" ext="jar" conf="javadoc" m:classifier="javadoc"/>
+		<artifact name="featherfly-constant-scope" type="source" ext="jar" conf="sources" m:classifier="sources"/>		
+	</publications>
+	<dependencies>
+		<dependency org="cn.featherfly" name="featherfly-constant" rev="1.2.0"/>
+		<dependency org="cn.featherfly" name="featherfly-scope" rev="1.1.0"/>
+	</dependencies>
+</ivy-module>

@@ -1,6 +1,6 @@
 package cn.featherfly.constant.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import java.util.Map.Entry;
 
@@ -12,7 +12,9 @@ import org.yufei.Role;
 import org.yufei.Role2;
 import org.yufei.User;
 
+import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.ConstantPool;
+import cn.featherfly.conversion.core.ConversionPolicys;
 
 /**
  * <p>
@@ -30,7 +32,7 @@ public class Test2 {
     
     @BeforeClass
     public void setUp() {
-        ConstantPool.init();
+    	ConstantConfigurator.config(ConversionPolicys.getFormatConversionPolicy());
         pool = ConstantPool.getDefault();        
     }
     
@@ -75,7 +77,7 @@ public class Test2 {
     }
     
     public static void main(String[] args) {
-        ConstantPool.init();
+    	ConstantConfigurator.config(ConversionPolicys.getFormatConversionPolicy());		
         ConstantPool pool = ConstantPool.getDefault();
 
         Role role = pool.getConstant(Role.class);

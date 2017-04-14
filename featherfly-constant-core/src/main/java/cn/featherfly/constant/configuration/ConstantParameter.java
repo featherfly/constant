@@ -28,6 +28,9 @@ public class ConstantParameter {
     @Constant("解析字符串时的解析器")
     private Class<?>[] parsers = new Class<?>[]{ClassParser.class
         , ConstantParser.class, JsonBeanPropertyParser.class};
+                
+    @Constant("用户配置文件")
+    private String[] configFiles = new String[]{"ApplicationConstant.xml"};
     
     @Constant("是否重新解析，当有解析器需要用到初始化比constant晚的内容时，可以打开此属性")
     private boolean reParse;
@@ -66,4 +69,12 @@ public class ConstantParameter {
     public boolean isDevMode() {
         return devMode;
     }
+
+	/**
+	 * 返回configFiles
+	 * @return configFiles
+	 */
+	public String[] getConfigFiles() {
+		return configFiles;
+	}
 }

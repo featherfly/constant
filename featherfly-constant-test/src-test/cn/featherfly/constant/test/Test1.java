@@ -1,13 +1,15 @@
 
 package cn.featherfly.constant.test;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 import org.yufei.User;
 
+import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.ConstantPool;
 import cn.featherfly.constant.configuration.ConstantParameter;
 import cn.featherfly.constant.description.ConstantClassDescription;
 import cn.featherfly.constant.description.ConstantDescription;
+import cn.featherfly.conversion.core.ConversionPolicys;
 
 /**
  * <p>
@@ -27,10 +29,8 @@ public class Test1 {
     }
     
     
-	public static void main(String[] args) {
-//		new CffMetadataReader3();
-		ConstantPool.init();
-		
+	public static void main(String[] args) {		
+		ConstantConfigurator.config(ConversionPolicys.getFormatConversionPolicy());		
 		ConstantPool pool = ConstantPool.getDefault();
 		
 		System.out.println(pool.getConstant(ConstantParameter.class).getBasePackeges());

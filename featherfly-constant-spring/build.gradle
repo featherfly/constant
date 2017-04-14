@@ -1,0 +1,16 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src"]
+        }
+    }
+}
+	
+dependencies {
+	compile project(':featherfly-constant-core')
+	compile 'org.springframework:spring-context:4.3.7.RELEASE'
+}
+
+jar {
+    manifest.attributes 'Build-Name': archivesBaseName
+}

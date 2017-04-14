@@ -1,0 +1,7 @@
+org.yufei.User2:
+    name:   
+      测试独立配置文件
+      配置在yaml文件中
+    age: 11
+org.yufei.User:
+    name: user.name.yaml

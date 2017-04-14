@@ -5,3 +5,14 @@
 1.加载本身的配置文件，读取本身的配置
 2.加载用户的配置文件，由本身的配置文件配置用户配置文件位置，默认值是本身的配置文件
 3.根据用户配置文件的扩展名使用不同的配置文件加载器(xml,json,yaml等)
+
+
+DOMConfigurator.load(ApplicationConstant.xml);
+
+ConstantParameter constant = ConstantPool.get();
+
+find Constant Object from constant.basePackeges;
+ 
+load Constant Config from constant.configFiles;
+
+merge Config to Object;

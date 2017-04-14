@@ -15,11 +15,24 @@ import cn.featherfly.constant.annotation.ConstantClass;
  * @author 钟冀
  */
 @ConstantClass("用户")
-public class User {
+public class User2 {
 	@Constant("名称")
-	private String name = "default_name";
+	private String name = "default_user2_name";
+	
+	@Constant("年龄")
+	private Integer age = 15;
 
 	public String getName() {
 		return name;
 	}
+
+	/**
+	 * 返回age
+	 * @return age
+	 */
+	public Integer getAge() {
+		return age;
+	}
+	
+	
 }

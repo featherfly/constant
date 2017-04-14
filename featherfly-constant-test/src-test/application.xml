@@ -12,5 +12,5 @@
 
     <context:component-scan base-package="org.yufei" />
 
-    <bean class="cn.featherfly.constant.spring.C"/>            
+    <bean class="cn.featherfly.constant.spring.ConstantConfigurer"/>            
 </beans>

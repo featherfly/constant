@@ -8,7 +8,9 @@ import org.testng.annotations.Test;
 import org.yufei.Role;
 import org.yufei.Roles;
 
+import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.ConstantPool;
+import cn.featherfly.conversion.core.ConversionPolicys;
 
 /**
  * <p>
@@ -20,15 +22,15 @@ import cn.featherfly.constant.ConstantPool;
  *
  * @author 钟冀
  */
-public class Test3 {
+public class SpringIntegrationTest {
     
     ConstantPool pool;
     ClassPathXmlApplicationContext context;
     @BeforeClass
     public void setUp() {
-        ConstantPool.init();
+    	ConstantConfigurator.config(ConversionPolicys.getFormatConversionPolicy());
         pool = ConstantPool.getDefault();        
-        context = new ClassPathXmlApplicationContext("context.xml");
+        context = new ClassPathXmlApplicationContext("application.xml");
         
     }
     
@@ -37,8 +39,8 @@ public class Test3 {
         Roles roles = context.getBean(Roles.class);
         Role role1 = roles.role;
         Role role2 = pool.getConstant(Role.class);
-        System.out.println(role1.getName());
-        System.out.println(role2.getName());
+        System.out.println("context.getBean.role role.name -> " + role1.getName());
+        System.out.println("pool.getConstant role.name -> " + role2.getName());
         assertTrue(role1.equals(role2));
     }
 }

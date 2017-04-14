@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<constants>
+	<org.yufei.User2>
+		<name value="测试独立配置文件.user2.xml"/>
+		<age>12</age>
+	</org.yufei.User2>
+	<org.yufei.User>
+		<constant name="name">
+			测试独立配置文件.user.xml
+		</constant>
+	</org.yufei.User>
+</constants>

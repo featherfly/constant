@@ -1,10 +1,12 @@
 
 package cn.featherfly.constant;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import cn.featherfly.constant.description.ConstantClassDescription;
-import cn.featherfly.conversion.core.ConversionPolicy;
 /**
  * <p>
  * 常量处理器.
@@ -15,14 +17,16 @@ public final class ConstantPool{
 
     private static ConstantPool constantPool;
     
-    private ConstantConfiguration configuration;
+    private final Map<Class<?>, Object> constants = new HashMap<>();
 
+    private final Map<Class<?>, ConstantClassDescription> constantDescriptions =
+            new HashMap<Class<?>, ConstantClassDescription>();
+    
     /**
      * 构造方法
      * @param configuration ConstantConfiguration
      */
-    private ConstantPool(ConstantConfiguration configuration) {
-        this.configuration = configuration;
+    ConstantPool() {
     }
     /**
      * <p>
@@ -40,27 +44,17 @@ public final class ConstantPool{
      * 初始化默认池.
      * </p>
      */
-    public static void init() {
-        init(null);
-    }
-
-    /**
-     * <p>
-     * 初始化默认常良池.
-     * @param conversionPolicy 转换策略
-     * </p>
-     */
-    public static void init(ConversionPolicy conversionPolicy) {
-        if (constantPool == null) {
+    static ConstantPool init() {
+    	if (constantPool == null) {
             synchronized (ConstantPool.class) {
                 if (constantPool == null) {
-                    constantPool = new ConstantPool(new ConstantConfiguration(conversionPolicy));
-                    constantPool.configuration.reParse();
+                	constantPool = new ConstantPool();
                 }
             }
         }
+    	return constantPool;
     }
-
+    
     /**
      * <p>
      * 获得指定类型的常量对象.
@@ -69,8 +63,9 @@ public final class ConstantPool{
      * @param type 指定类型
      * @return 指定类型的常量对象
      */
+    @SuppressWarnings("unchecked")
     public <T> T getConstant(Class<T> type) {
-        return configuration.getConstant(type);
+        return (T) constants.get(type);
     }
 
     /**
@@ -81,7 +76,7 @@ public final class ConstantPool{
      * @return 是否已经存在指定的常量配置类
      */
     public boolean hasConstant(Class<?> type) {
-        return configuration.hasConstant(type);
+        return constants.containsKey(type);
     }
 
     /**
@@ -91,19 +86,18 @@ public final class ConstantPool{
      * @return 常量对象集合
      */
     public Collection<?> getConstants() {
-        return configuration.getConstants();
+        return constants.values();
     }
-
+    
     /**
      * <p>
      * 获得指定类型的常量描述.
      * </p>
-     * @param <T> 泛型
      * @param type 指定类型
      * @return 指定类型的常量描述
      */
-    public <T> ConstantClassDescription getConstantDescription(Class<T> type) {
-        return configuration.getConstantDescription(type);
+    public ConstantClassDescription getConstantDescription(Class<?> type) {
+        return constantDescriptions.get(type);
     }
 
     /**
@@ -113,8 +107,23 @@ public final class ConstantPool{
      * @return 常量描述集合
      */
     public Collection<ConstantClassDescription> getConstantDescriptions() {
-        return configuration.getConstantDescriptions();
+        return new ArrayList<ConstantClassDescription>(constantDescriptions.values());
     }
+        
+    /**
+     * <p>
+     * 添加常量对象到池中.
+     * </p>
+     * @param constant 常量对象
+     * @param constantClassDescription 常量描述信息
+     */
+    void addConstant(Object constant, ConstantClassDescription constantClassDescription) {
+        if (constant != null) {
+            constants.put(constant.getClass(), constant);
+            constantDescriptions.put(constant.getClass(), constantClassDescription);
+        }
+    }
+
     /**
      * <p>
      * 返回是否初始化

@@ -16,7 +16,6 @@ public class ConstantContent {
      * 
      */
     ConstantContent() {
-        // YUFEI_TODO Auto-generated constructor stub
     }
     
     /**

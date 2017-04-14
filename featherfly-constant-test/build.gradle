@@ -4,13 +4,11 @@ allprojects {
     apply plugin: 'maven'  
     apply plugin: "maven-publish"
     
-    sourceCompatibility = 1.7  
-	targetCompatibility = 1.7  
-    
     ext {
 	    compileDependencies =[
-	        'cn.featherfly:featherfly-common:latest.integration'
-	        ,'cn.featherfly:featherfly-conversion:latest.integration'
+	        'cn.featherfly:featherfly-common:1.5.2'
+	        ,'cn.featherfly:featherfly-conversion:1.2.2'
+	        ,'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.8.8'
 	        ,'dom4j:dom4j:1.6.1'
 	        ]
 	}
@@ -54,10 +52,13 @@ allprojects {
 	}
 	
 	repositories {
-        mavenCentral()
         maven {
             url  ant.properties['user.home'] +  "/.m2/repository"
         }
+        maven {
+        	url "http://maven.aliyun.com/nexus/content/groups/public/"
+        }
+        mavenCentral()
     }
 
     dependencies {
