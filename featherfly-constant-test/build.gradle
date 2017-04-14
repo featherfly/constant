@@ -1,8 +1,11 @@
 allprojects {
     apply plugin: 'java'
-    apply plugin: 'eclipse'
     apply plugin: 'maven'  
     apply plugin: "maven-publish"
+    
+    
+    apply from: '../featherfly-constant-test/java_base.gradle'
+	apply from: '../featherfly-constant-test/maven_push.gradle'
     
     ext {
 	    compileDependencies =[
@@ -12,45 +15,7 @@ allprojects {
 	        ,'dom4j:dom4j:1.6.1'
 	        ]
 	}
-	
-	tasks.withType(JavaCompile) {
-	    options.encoding = "UTF-8"
-	}
-	tasks.withType(Javadoc) {
-	    options.encoding = "UTF-8"
-	}
-
-	task sourcesJar(type: Jar) {
-	    classifier "sources"
-	    from sourceSets.main.java.srcDirs
-	}
-	
-	task javadocJar(type: Jar, dependsOn:javadoc) { 
-	     classifier = "javadoc"
-	     from javadoc.destinationDir 
-	}
-	
-	artifacts {  
-	    archives jar  
-	    archives javadocJar  
-	    archives sourcesJar  
-	}  
-	 
-	
-	publishing {
-	    publications {
-	        mavenJava(MavenPublication) {
-	            from components.java
-	            artifact (sourcesJar) {
-	                classifier "sources"
-	            }
-	            artifact (javadocJar) {
-	                classifier "javadoc"
-	            }
-	        }
-	    }    
-	}
-	
+		
 	repositories {
         maven {
             url  ant.properties['user.home'] +  "/.m2/repository"
@@ -68,13 +33,6 @@ allprojects {
 	    testCompile (
 	    	'org.testng:testng:latest.integration'
 	    )
-	}
-
-    jar {
-	    manifest.attributes 'Build-By': "zhong ji"
-	    manifest.attributes 'Tool' : "gradle"
-	    manifest.attributes 'Build-Jdk' : ant.properties['java.runtime.version']
-	    manifest.attributes 'Bundle-License': 'http://www.apache.org/licenses/LICENSE-2.0'
 	}
 }
 
