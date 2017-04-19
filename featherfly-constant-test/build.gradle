@@ -9,7 +9,7 @@ allprojects {
     
     ext {
 	    compileDependencies =[
-	        'cn.featherfly:featherfly-common:1.5.2'
+	        'cn.featherfly:featherfly-common:1.6.0'
 	        ,'cn.featherfly:featherfly-conversion:1.2.2'
 	        ,'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.8.8'
 	        ,'dom4j:dom4j:1.6.1'
