@@ -13,15 +13,15 @@ import cn.featherfly.common.lang.StringUtils;
 import cn.featherfly.conversion.core.ConversionPolicy;
 import cn.featherfly.conversion.parse.ParsePolity;
 
-
 /**
  * <p>
  * XML格式可配置常量配置读取.
  * </p>
+ *
  * @author 钟冀
  */
-public class DOMConfigurator extends AbstractConfigurator{
-    
+public class DOMConfigurator extends AbstractConfigurator {
+
     private static final String CLASS_NODE_CLASS = "class";
     private static final String CONSTANT_NODE_NAME = "name";
     private static final String CONSTANT_NODE_VALUE = "value";
@@ -29,26 +29,27 @@ public class DOMConfigurator extends AbstractConfigurator{
     // ********************************************************************
     //    构造方法
     // ********************************************************************
-        
+
     /**
-     * @param fileName fileName
+     * @param fileName         fileName
      * @param conversionPolicy conversionPolicy
-     * @param parsePolity parsePolity
+     * @param parsePolity      parsePolity
      */
     DOMConfigurator(String fileName, ConversionPolicy conversionPolicy, ParsePolity parsePolity) {
         this(fileName, conversionPolicy, parsePolity, new ConstantPool());
     }
 
     /**
-     * @param fileName fileName
+     * @param fileName         fileName
      * @param conversionPolicy conversionPolicy
-     * @param parsePolity parsePolity
-     * @param constantPool constantPool
+     * @param parsePolity      parsePolity
+     * @param constantPool     constantPool
      */
-    DOMConfigurator(String fileName, ConversionPolicy conversionPolicy, ParsePolity parsePolity, ConstantPool constantPool) {
-    	super(fileName, conversionPolicy, parsePolity, constantPool);
+    DOMConfigurator(String fileName, ConversionPolicy conversionPolicy, ParsePolity parsePolity,
+            ConstantPool constantPool) {
+        super(fileName, conversionPolicy, parsePolity, constantPool);
     }
-    
+
     // ********************************************************************
     //    方法
     // ********************************************************************
@@ -58,12 +59,11 @@ public class DOMConfigurator extends AbstractConfigurator{
      */
     @Override
     protected List<Object> readCfg(URL cfgFile) {
-        List<Object> constantList = new ArrayList<Object>();
+        List<Object> constantList = new ArrayList<>();
         try {
             SAXReader reader = new SAXReader();
             Document doc = reader.read(cfgFile);
             Element root = doc.getRootElement();
-            @SuppressWarnings("unchecked")
             List<Element> constantClassList = root.elements();
             for (Element constantClass : constantClassList) {
                 Object constant = createConfigObject(constantClass);
@@ -72,38 +72,35 @@ public class DOMConfigurator extends AbstractConfigurator{
                 }
             }
         } catch (DocumentException e) {
-            logger.error("开始读取常量配置文件{}时发生错误：{}",
-                    cfgFile.getPath(), e.getMessage());
+            logger.error("开始读取常量配置文件{}时发生错误：{}", cfgFile.getPath(), e.getMessage());
         }
         return constantList;
     }
-        
+
     // ********************************************************************
     //    private method
     // ********************************************************************
 
-    
-    //从配置文件创建配置对象 
+    //从配置文件创建配置对象
     private Object createConfigObject(Element constantClass) {
         Object obj = null;
         String className = constantClass.attributeValue(CLASS_NODE_CLASS);
         if (className == null) {
-        	className = constantClass.getName();
+            className = constantClass.getName();
         }
         try {
             Class<?> type = Class.forName(className);
             if (filter(type)) {
-            	logger.debug("filter type {}", type.getName());
-            	return null;
+                logger.debug("filter type {}", type.getName());
+                return null;
             }
             obj = type.newInstance();
             logger.debug("new instance for type {}", type.getName());
-            @SuppressWarnings("unchecked")
             List<Element> constantList = constantClass.elements();
             for (Element constant : constantList) {
-                String name = constant.attributeValue(CONSTANT_NODE_NAME);                
+                String name = constant.attributeValue(CONSTANT_NODE_NAME);
                 if (name == null) {
-                	name = constant.getName();
+                    name = constant.getName();
                 }
                 String value = constant.attributeValue(CONSTANT_NODE_VALUE);
                 if (StringUtils.isBlank(value)) {
@@ -118,15 +115,15 @@ public class DOMConfigurator extends AbstractConfigurator{
         }
         return obj;
     }
-    
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected boolean match(String fileExtName) {
-		return "xml".equalsIgnoreCase(fileExtName);
-	}
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean match(String fileExtName) {
+        return "xml".equalsIgnoreCase(fileExtName);
+    }
+
     // ********************************************************************
     //    属性
     // ********************************************************************

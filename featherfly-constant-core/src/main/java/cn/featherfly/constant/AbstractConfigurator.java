@@ -118,7 +118,6 @@ public abstract class AbstractConfigurator {
      * <p>
      * 获得指定类型的常量描述.
      * </p>
-     * @param <T> 泛型
      * @param type 指定类型
      * @return 指定类型的常量描述
      */
