@@ -1,8 +1,5 @@
 allprojects {
     apply plugin: 'java'
-    apply plugin: 'maven'  
-    apply plugin: "maven-publish"
-    
     
     apply from: '../featherfly-constant-test/java_base.gradle'
 	apply from: '../featherfly-constant-test/maven_push.gradle'
