@@ -11,13 +11,12 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.ConstantPool;
-import cn.featherfly.conversion.core.ConversionPolicys;
 
 /**
  * <p>
  * 自动注册constant对象到spring context
  * </p>
- * 
+ *
  * @author 钟冀
  */
 public class ConstantConfigurer implements BeanFactoryPostProcessor {
@@ -31,17 +30,16 @@ public class ConstantConfigurer implements BeanFactoryPostProcessor {
      * {@inheritDoc}
      */
     @Override
-    public void postProcessBeanFactory(
-            ConfigurableListableBeanFactory beanFactory) throws BeansException {    	
-    	logger.debug("start regist constant to spring");
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        logger.debug("start regist constant to spring");
         if (!ConstantPool.isInit()) {
-        	ConstantConfigurator.config(ConversionPolicys.getFormatConversionPolicy());
+            ConstantConfigurator.config();
         }
         ConstantPool pool = ConstantPool.getDefault();
         Collection<?> constants = pool.getConstants();
         for (Object constant : constants) {
             logger.debug("regist -> {} ", constant.getClass().getName());
-            
+
             beanFactory.registerSingleton(constant.getClass().getName(), constant);
         }
         logger.debug("end regist constant to spring");
