@@ -7,7 +7,6 @@ allprojects {
     ext {
 	    compileDependencies =[
 	        'cn.featherfly:featherfly-common:1.7.5'
-	        ,'cn.featherfly:featherfly-conversion:1.2.2'
 	        ,'com.fasterxml.jackson.core:jackson-databind:2.9.9.2'
 	        ,'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
 	        ,'org.dom4j:dom4j:2.1.1'
