@@ -1,7 +1,7 @@
 TODO 
     加入configFileLoader进入ConstantParameter
     对@ConstantClass标注对象进行限制加入对接口和抽象类的支持
-
+    
 2019-08
 1.5.0
     1.默认配置文件从ApplicationConstant.xml变为constant.yaml
