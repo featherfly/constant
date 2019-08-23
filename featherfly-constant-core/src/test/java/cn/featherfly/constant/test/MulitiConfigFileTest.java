@@ -72,6 +72,23 @@ public class MulitiConfigFileTest {
         }
     }
 
+    @Test
+    public void test3() throws JsonProcessingException {
+        ConstantConfigurator configurator = ConstantConfigurator
+                .config("ApplicationConstant.xml");
+        ConstantParameter p = ConstantPool.getDefault()
+                .getConstant(ConstantParameter.class);
+        System.out.println(ArrayUtils.toString(p.getBasePackeges()));
+        System.out.println(ArrayUtils.toString(p.getConfigFiles()));
+        Collection<?> constants = configurator.getConstants();
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (Object constant : constants) {
+            System.out.println(constant.getClass().getName());
+            System.out.println(objectMapper.writerFor(constant.getClass())
+                    .writeValueAsString(constant));
+        }
+    }
+
     public static void main(String[] args) throws Exception {
 
         // URL url = ClassLoaderUtils.getResource("Constant.yaml",

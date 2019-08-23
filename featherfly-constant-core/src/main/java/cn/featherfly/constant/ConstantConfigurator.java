@@ -79,11 +79,10 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
 
     public static ConstantConfigurator config(String fileName,
             ConversionPolicy conversionPolicy, ParsePolity parsePolity) {
-        ConstantParameter config = new ConstantParameter();
+        ConstantParameter config = ConstantParameter.DEFAULT;
         if (parsePolity == null) {
             parsePolity = initParserPolity(config);
         }
-
         ConstantPool constantPool = ConstantPool.init();
         DOMConfigurator domConfigurator = new DOMConfigurator(fileName,
                 conversionPolicy, parsePolity, constantPool);
@@ -104,7 +103,13 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
         // Collection<Object> constants =
         configurator.scanConstants();
         List<AbstractConfigurator> configurators = new ArrayList<>();
+
+        Set<String> configFiles = new HashSet<>();
+        configFiles.add(fileName);
         for (String file : config.getConfigFiles()) {
+            configFiles.add(file);
+        }
+        for (String file : configFiles) {
             MulitiFileTypeConfigurator mulitiFileTypeConfigurator = new MulitiFileTypeConfigurator(
                     file,
                     new DOMConfigurator(file, conversionPolicy, parsePolity,
@@ -118,7 +123,6 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
             // System.err.println("parse " + c.getClass().getName());
             c.parse(configurator.getConstants());
         }
-        // configurator.parse(configurator.getConstants());
         return configurator;
     }
 
@@ -170,29 +174,29 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
             metaSet.addAll(provider.findMetadata(bp));
         }
         List<Object> constants = new ArrayList<>();
+        List<Class<?>> typeList = new ArrayList<>();
         for (MetadataReader metadataReader : metaSet) {
             String className = metadataReader.getClassMetadata().getClassName();
             try {
                 if (metadataReader.getAnnotationMetadata()
                         .hasAnnotation(ConstantClass.class.getName())) {
-                    Class<?> type = Class.forName(className);
-                    if (hasConstant(type)) {
-                        logger.warn(
-                                String.format("重复的配置类[%s],使用忽略原则", className));
-                        continue;
-                    }
-                    Object constant = type.newInstance();
-                    addConstant(constant, false);
-                    constants.add(constant);
+                    typeList.add(replaceConstructors(className));
                 }
-            } catch (ClassNotFoundException e) {
-                throw new ConstantException(
-                        String.format("常量配置类%s没有找到", className));
             } catch (Exception e) {
                 throw new ConstantException(String.format("常量配置类%s生成对象时发生异常：%s",
                         className, e.getMessage()));
             }
         }
+        typeList.forEach(type -> {
+            if (hasConstant(type)) {
+                logger.warn(String.format("重复的配置类[%s],使用忽略原则", type.getName()));
+            } else {
+                Object constant = newInstance(type);
+                addConstant(constant, false);
+                constants.add(constant);
+            }
+        });
         return constants;
     }
+
 }

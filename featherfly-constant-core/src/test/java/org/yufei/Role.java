@@ -16,22 +16,27 @@ import cn.featherfly.constant.annotation.ConstantClass;
  */
 @ConstantClass("角色")
 public class Role {
-	@Constant("名称")
-	private String name = "admin";
-	@Constant("用户")
-	private User user;
 
-	/**
-	 * 返回user
-	 * @return user
-	 */
-	public User getUser() {
-		return user;
-	}
+    private Role() {
+    }
 
-	public String getName() {
-		return name;
-	}
+    @Constant("名称")
+    private String name = "admin";
+    @Constant("用户")
+    private User user;
+
+    /**
+     * 返回user
+     * 
+     * @return user
+     */
+    public User getUser() {
+        return user;
+    }
+
+    public String getName() {
+        return name;
+    }
 
     /**
      * {@inheritDoc}
@@ -50,23 +55,30 @@ public class Role {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Role other = (Role) obj;
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         if (user == null) {
-            if (other.user != null)
+            if (other.user != null) {
                 return false;
-        } else if (!user.equals(other.user))
+            }
+        } else if (!user.equals(other.user)) {
             return false;
+        }
         return true;
     }
 
@@ -77,6 +89,5 @@ public class Role {
     public String toString() {
         return "Role [name=" + name + ", user=" + user + "]";
     }
-    
-    
+
 }

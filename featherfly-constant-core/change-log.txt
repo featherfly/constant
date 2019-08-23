@@ -1,3 +1,7 @@
+TODO 
+    加入configFileLoader进入ConstantParameter
+    对@ConstantClass标注对象进行限制加入对接口和抽象类的支持
+
 2019-08
 1.5.0
     1.默认配置文件从ApplicationConstant.xml变为constant.yaml
@@ -11,8 +15,7 @@
             cn.featherfly.conversion.parse.ClassParser
             ,cn.featherfly.conversion.parse.JsonBeanPropertyParser
             ,cn.featherfly.constant.parse.ConstantParser
-    3.TODO 加入configFileLoader进入ConstantParameter
-    4.TODO 对@ConstantClass标注对象进行限制，要求不能有private构造器以外的构造器，另外加入对接口和抽象类的支持            
+    3.实现@ConstantClass标注类不能有private构造方法以外的构造方法并且必须有一个无参数私有构造方法
                   
 
 2019-08-20

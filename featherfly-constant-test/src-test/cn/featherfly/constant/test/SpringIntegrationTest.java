@@ -10,7 +10,6 @@ import org.yufei.Roles;
 
 import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.ConstantPool;
-import cn.featherfly.conversion.core.ConversionPolicys;
 
 /**
  * <p>
@@ -23,23 +22,25 @@ import cn.featherfly.conversion.core.ConversionPolicys;
  * @author 钟冀
  */
 public class SpringIntegrationTest {
-    
+
     ConstantPool pool;
     ClassPathXmlApplicationContext context;
+
     @BeforeClass
     public void setUp() {
-    	ConstantConfigurator.config(ConversionPolicys.getFormatConversionPolicy());
-        pool = ConstantPool.getDefault();        
+        ConstantConfigurator.config("AppConstant.xml");
+        pool = ConstantPool.getDefault();
         context = new ClassPathXmlApplicationContext("application.xml");
-        
+
     }
-    
+
     @Test
     public void test() {
         Roles roles = context.getBean(Roles.class);
         Role role1 = roles.role;
         Role role2 = pool.getConstant(Role.class);
-        System.out.println("context.getBean.role role.name -> " + role1.getName());
+        System.out.println(
+                "context.getBean.role role.name -> " + role1.getName());
         System.out.println("pool.getConstant role.name -> " + role2.getName());
         assertTrue(role1.equals(role2));
     }

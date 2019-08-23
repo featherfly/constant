@@ -9,7 +9,6 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import cn.featherfly.common.lang.StringUtils;
 import cn.featherfly.conversion.core.ConversionPolicy;
 import cn.featherfly.conversion.parse.ParsePolity;
 
@@ -27,31 +26,39 @@ public class DOMConfigurator extends AbstractConfigurator {
     private static final String CONSTANT_NODE_VALUE = "value";
 
     // ********************************************************************
-    //    构造方法
+    // 构造方法
     // ********************************************************************
 
     /**
-     * @param fileName         fileName
-     * @param conversionPolicy conversionPolicy
-     * @param parsePolity      parsePolity
+     * @param fileName
+     *            fileName
+     * @param conversionPolicy
+     *            conversionPolicy
+     * @param parsePolity
+     *            parsePolity
      */
-    DOMConfigurator(String fileName, ConversionPolicy conversionPolicy, ParsePolity parsePolity) {
+    DOMConfigurator(String fileName, ConversionPolicy conversionPolicy,
+            ParsePolity parsePolity) {
         this(fileName, conversionPolicy, parsePolity, new ConstantPool());
     }
 
     /**
-     * @param fileName         fileName
-     * @param conversionPolicy conversionPolicy
-     * @param parsePolity      parsePolity
-     * @param constantPool     constantPool
+     * @param fileName
+     *            fileName
+     * @param conversionPolicy
+     *            conversionPolicy
+     * @param parsePolity
+     *            parsePolity
+     * @param constantPool
+     *            constantPool
      */
-    DOMConfigurator(String fileName, ConversionPolicy conversionPolicy, ParsePolity parsePolity,
-            ConstantPool constantPool) {
+    DOMConfigurator(String fileName, ConversionPolicy conversionPolicy,
+            ParsePolity parsePolity, ConstantPool constantPool) {
         super(fileName, conversionPolicy, parsePolity, constantPool);
     }
 
     // ********************************************************************
-    //    方法
+    // 方法
     // ********************************************************************
 
     /**
@@ -72,46 +79,37 @@ public class DOMConfigurator extends AbstractConfigurator {
                 }
             }
         } catch (DocumentException e) {
-            logger.error("开始读取常量配置文件{}时发生错误：{}", cfgFile.getPath(), e.getMessage());
+            logger.error("开始读取常量配置文件{}时发生错误：{}", cfgFile.getPath(),
+                    e.getMessage());
         }
         return constantList;
     }
 
     // ********************************************************************
-    //    private method
+    // private method
     // ********************************************************************
 
-    //从配置文件创建配置对象
+    // 从配置文件创建配置对象
     private Object createConfigObject(Element constantClass) {
-        Object obj = null;
         String className = constantClass.attributeValue(CLASS_NODE_CLASS);
         if (className == null) {
             className = constantClass.getName();
         }
-        try {
-            Class<?> type = Class.forName(className);
-            if (filter(type)) {
-                logger.debug("filter type {}", type.getName());
-                return null;
+        Object obj = initConstant(className);
+        if (obj == null) {
+            return null;
+        }
+        List<Element> constantList = constantClass.elements();
+        for (Element constant : constantList) {
+            String name = constant.attributeValue(CONSTANT_NODE_NAME);
+            if (name == null) {
+                name = constant.getName();
             }
-            obj = type.newInstance();
-            logger.debug("new instance for type {}", type.getName());
-            List<Element> constantList = constantClass.elements();
-            for (Element constant : constantList) {
-                String name = constant.attributeValue(CONSTANT_NODE_NAME);
-                if (name == null) {
-                    name = constant.getName();
-                }
-                String value = constant.attributeValue(CONSTANT_NODE_VALUE);
-                if (StringUtils.isBlank(value)) {
-                    value = constant.getTextTrim();
-                }
-                setProperty(obj, name, value);
+            String value = constant.attributeValue(CONSTANT_NODE_VALUE);
+            if (org.apache.commons.lang3.StringUtils.isBlank(value)) {
+                value = constant.getTextTrim();
             }
-        } catch (ClassNotFoundException e) {
-            throw new ConstantException(String.format("常量配置类%s没有找到", className));
-        } catch (Exception e) {
-            throw new ConstantException(String.format("常量配置类%s生成对象时发生异常：%s", className, e.getMessage()));
+            setProperty(obj, name, value);
         }
         return obj;
     }
@@ -125,7 +123,7 @@ public class DOMConfigurator extends AbstractConfigurator {
     }
 
     // ********************************************************************
-    //    属性
+    // 属性
     // ********************************************************************
 
 }

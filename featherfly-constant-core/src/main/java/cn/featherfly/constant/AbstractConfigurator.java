@@ -1,5 +1,6 @@
 package cn.featherfly.constant;
 
+import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +16,7 @@ import cn.featherfly.common.bean.NoSuchPropertyException;
 import cn.featherfly.common.bean.matcher.BeanPropertyAnnotationMatcher;
 import cn.featherfly.common.lang.ArrayUtils;
 import cn.featherfly.common.lang.ClassLoaderUtils;
+import cn.featherfly.common.lang.ClassUtils;
 import cn.featherfly.common.lang.LangUtils;
 import cn.featherfly.common.policy.WhiteBlackListPolicy;
 import cn.featherfly.constant.annotation.Constant;
@@ -25,6 +27,12 @@ import cn.featherfly.constant.description.ConstantDescription;
 import cn.featherfly.conversion.core.BeanPropertyConversion;
 import cn.featherfly.conversion.core.ConversionPolicy;
 import cn.featherfly.conversion.parse.ParsePolity;
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.Modifier;
+import javassist.NotFoundException;
 
 /**
  * <p>
@@ -48,6 +56,8 @@ public abstract class AbstractConfigurator {
     protected String fileName;
 
     protected WhiteBlackListPolicy<Class<?>> filterTypePolicy;
+
+    private static final Map<String, Class<?>> REPLACED_CLASS_MAP = new HashMap<>();
 
     // ********************************************************************
     // 构造方法
@@ -312,6 +322,104 @@ public abstract class AbstractConfigurator {
                     // 延迟进行解析类设置
                 }
             }
+        }
+    }
+
+    protected Class<?> replaceConstructors(String className) {
+        if (className.equals(ConstantParameter.class.getName())) {
+            return ConstantParameter.class;
+        }
+        Class<?> type = REPLACED_CLASS_MAP.get(className);
+        if (type == null) {
+            ClassPool pool = ClassPool.getDefault();
+            try {
+                CtClass ctClass = pool.get(className);
+                if (ctClass.isInterface()
+                        || Modifier.isAbstract(ctClass.getModifiers())) {
+                    // String dynamicClassName = ctClass.getPackageName() + "._"
+                    // + ctClass.getSimpleName() + "DynamicImpl";
+                    // CtClass dynamicCtClass =
+                    // pool.makeClass(dynamicClassName);
+                    // for (CtMethod method : ctClass.getMethods()) {
+                    // CtMethod ctMethod = new CtMethod(method.getReturnType(),
+                    // method.getName(), method.getParameterTypes(),
+                    // dynamicCtClass);
+                    // ctMethod.setBody("");
+                    // dynamicCtClass.addMethod(ctMethod);
+                    // }
+                    // ctClass = dynamicCtClass;
+                    // TODO 这里加入接口和抽象类的支持
+                } else {
+                    boolean hasDefaultConstructor = false;
+                    for (CtConstructor ctc : ctClass
+                            .getDeclaredConstructors()) {
+                        if (!javassist.Modifier.isPrivate(ctc.getModifiers())) {
+                            throw new ConstantException(String.format(
+                                    "@ConstantClass标注的可实例化类%s只能拥有私有构造方法",
+                                    className));
+                        }
+                        if (ctc.getParameterTypes().length == 0) {
+                            ctc.setModifiers(javassist.Modifier.PUBLIC);
+                            // ctClass.removeConstructor(ctc);
+                            hasDefaultConstructor = true;
+                        }
+                    }
+                    if (!hasDefaultConstructor) {
+                        throw new ConstantException(String.format(
+                                "@ConstantClass标注的可实例化类%s必须有没有参数的私有构造方法",
+                                className));
+                    }
+                }
+
+                // CtConstructor ctConstructor = new CtConstructor(new
+                // CtClass[0],
+                // ctClass);
+                // ctConstructor.setModifiers(javassist.Modifier.PUBLIC);
+                // ctConstructor.setBody("super();");
+                // ctClass.addConstructor(ctConstructor);
+                type = ctClass.toClass();
+                ctClass.detach();
+                REPLACED_CLASS_MAP.put(className, type);
+            } catch (NotFoundException e) {
+                throw new ConstantException(
+                        String.format("常量配置类%s没有找到", className));
+            } catch (CannotCompileException e) {
+                throw new ConstantException(String.format("常量配置类%s预处理报错:%s",
+                        className, e.getMessage()));
+            }
+        }
+        return type;
+    }
+
+    protected Object initConstant(String className) {
+        Object object = null;
+        Class<?> type = replaceConstructors(className);
+        if (filter(type)) {
+            logger.debug("filter type {}", type.getName());
+            return null;
+        }
+
+        if (type.isInterface() || ClassUtils.isAbstractClass(type)) {
+
+        } else {
+            object = newInstance(type);
+        }
+        logger.debug("new instance for type {}", type.getName());
+        return object;
+    }
+
+    protected Object newInstance(Class<?> constantType) {
+        try {
+            if (constantType == ConstantParameter.class) {
+                Constructor<?> constructor = constantType
+                        .getDeclaredConstructor(new Class<?>[0]);
+                constructor.setAccessible(true);
+                return constructor.newInstance(new Object[0]);
+            }
+            return constantType.newInstance();
+        } catch (Exception e) {
+            throw new ConstantException(String.format("常量配置类%s生成对象时发生异常：%s",
+                    constantType.getName(), e.getMessage()));
         }
     }
 

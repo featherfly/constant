@@ -3,7 +3,7 @@
 	<constants class="cn.featherfly.constant.configuration.ConstantParameter">
 		<constant name="basePackeges" value="cn.featherfly,org.yufei"/>		
 <!-- 		<constant name="configFiles" value="ApplicationConstant.xml,Constant.xml,Constant.yaml"/> -->
-		<constant name="configFiles" value="ApplicationConstant.xml,Constant.yaml,Constant-Role3.yaml"/>
+		<constant name="configFiles" value="ApplicationConstant.xml,importConstant.xml,Constant-Role3.yaml"/>
 		<constant name="reParse" value="true"/>
 		<constant name="parsers">
 			cn.featherfly.conversion.parse.ClassParser
@@ -13,7 +13,7 @@
 	</constants>
 	<constants class="org.yufei.Role">
         <constant name="user" value="class:org.yufei.User"/>
-        <!-- <constant name="user" value="constant:org.yufei.User"/> -->
+<!--         <constant name="user" value="constant:org.yufei.User"/> -->
         <constant name="name" value="constant:cn.featherfly.constant.test.ConstantTest#name"/>
     </constants>
 	<constants class="cn.featherfly.constant.test.ConstantTest">

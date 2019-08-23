@@ -84,7 +84,6 @@ public class YAMLConfigurator extends AbstractConfigurator {
             Iterator<Entry<String, JsonNode>> fieldsIter = jsonNode.fields();
             while (fieldsIter.hasNext()) {
                 Entry<String, JsonNode> entry = fieldsIter.next();
-                System.err.println(entry);
                 if (entry.getKey().contains(".")) {
                     constantMap.put(entry.getKey(), entry.getValue());
                 } else {
@@ -93,30 +92,27 @@ public class YAMLConfigurator extends AbstractConfigurator {
             }
 
             if (!constantParameterMap.isEmpty()) {
-                ConstantParameter constantParameter = new ConstantParameter();
-                Object constant = createConfigObject(constantParameter,
+                Object constant = createConfigObject(ConstantParameter.DEFAULT,
                         constantParameterMap.entrySet().iterator());
                 if (constant != null) {
                     constantList.add(constant);
                 }
             }
-            addConstant(ConstantParameter.class.getName(), jsonNode,
-                    constantList);
             constantMap.forEach((k, v) -> {
-                addConstant(k, jsonNode, constantList);
+                addConstant(k, v, constantList);
             });
 
         } catch (Exception e) {
-            logger.error("开始读取常量配置文件{}时发生错误：{}", cfgFile.getPath(),
-                    e.getMessage());
+            // logger.error("开始读取常量配置文件{}时发生错误：{}", cfgFile.getPath(),
+            // e.getMessage());
+            throw new ConstantException(e);
         }
         return constantList;
     }
 
     private void addConstant(String className, JsonNode jsonNode,
             List<Object> constantList) {
-        Object constant = createConfigObject(ConstantParameter.class.getName(),
-                jsonNode);
+        Object constant = createConfigObject(className, jsonNode);
         if (constant != null) {
             constantList.add(constant);
         }
@@ -129,44 +125,27 @@ public class YAMLConfigurator extends AbstractConfigurator {
     // 从配置文件创建配置对象
     private Object createConfigObject(String className,
             JsonNode propertiesNode) {
-        Object obj = null;
-        try {
-            Class<?> type = Class.forName(className);
-            if (filter(type)) {
-                logger.debug("filter type {}", type.getName());
-                return null;
-            }
-            obj = type.newInstance();
-            logger.debug("new instance for type {}", type.getName());
-        } catch (ClassNotFoundException e) {
-            throw new ConstantException(
-                    String.format("常量配置类%s没有找到", className));
-        } catch (Exception e) {
-            throw new ConstantException(String.format("常量配置类%s生成对象时发生异常：%s",
-                    className, e.getMessage()));
+        Object obj = initConstant(className);
+        if (obj == null) {
+            return null;
         }
-
-        createConfigObject(className, propertiesNode.fields());
-        return obj;
+        return createConfigObject(obj, propertiesNode.fields());
     }
 
+    // 从配置文件创建配置对象
     private Object createConfigObject(Object obj,
             Iterator<Entry<String, JsonNode>> propertiesIter) {
-        try {
-            while (propertiesIter.hasNext()) {
-                Entry<String, JsonNode> property = propertiesIter.next();
-                String name = property.getKey();
-                JsonNode value = property.getValue();
-                if (value.isContainerNode()) {
-                    setProperty(obj, name, value);
-                } else {
-                    setProperty(obj, name, value.asText());
-                }
+        while (propertiesIter.hasNext()) {
+            Entry<String, JsonNode> property = propertiesIter.next();
+            String name = property.getKey();
+            JsonNode value = property.getValue();
+            if (value.isContainerNode()) {
+                setProperty(obj, name, value);
+            } else {
+                setProperty(obj, name, value.asText());
             }
-        } catch (Exception e) {
-            throw new ConstantException(String.format("常量配置类%s生成对象时发生异常：%s",
-                    obj.getClass().getName(), e.getMessage()));
         }
+        logger.debug("create constant {}", obj.getClass().getName());
         return obj;
     }
 

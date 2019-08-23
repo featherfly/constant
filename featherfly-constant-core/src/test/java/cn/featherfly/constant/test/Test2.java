@@ -1,6 +1,6 @@
 package cn.featherfly.constant.test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Map.Entry;
 
@@ -27,15 +27,15 @@ import cn.featherfly.conversion.core.ConversionPolicys;
  * @author 钟冀
  */
 public class Test2 {
-    
+
     ConstantPool pool;
-    
+
     @BeforeClass
     public void setUp() {
-    	ConstantConfigurator.config(ConversionPolicys.getFormatConversionPolicy());
-        pool = ConstantPool.getDefault();        
+        ConstantConfigurator.config("ApplicationConstant.xml");
+        pool = ConstantPool.getDefault();
     }
-    
+
     @Test
     public void test() {
         Role role = pool.getConstant(Role.class);
@@ -44,8 +44,8 @@ public class Test2 {
         System.out.println(role.getName());
         System.out.println(role.getUser().getName());
         assertEquals(role.getName(), constantTest.getName());
-        assertEquals(role.getUser().getName(), new User().getName());
-        
+        // assertEquals(role.getUser().getName(), new User().getName());
+
         Role2 role2 = pool.getConstant(Role2.class);
         System.out.println(role2.getName());
         System.out.println(role2.getUser().getName());
@@ -55,7 +55,7 @@ public class Test2 {
         assertEquals(role2.getUser(), user);
         assertEquals(role2.getPerson().getName(), "p1");
         assertEquals(role2.getPerson().getAge(), new Integer(10));
-        
+
         int index = 0;
         for (Person p : role2.getPersons()) {
             index++;
@@ -75,9 +75,10 @@ public class Test2 {
             assertEquals(p.getAge(), new Integer(30 + index));
         }
     }
-    
+
     public static void main(String[] args) {
-    	ConstantConfigurator.config(ConversionPolicys.getFormatConversionPolicy());		
+        ConstantConfigurator
+                .config(ConversionPolicys.getFormatConversionPolicy());
         ConstantPool pool = ConstantPool.getDefault();
 
         Role role = pool.getConstant(Role.class);
