@@ -29,7 +29,7 @@ allprojects {
 			compile (depend)
 		}
 	    testCompile (
-	    	'org.testng:testng:latest.integration'
+	    	'org.testng:testng:6.14.3'
 	    )
 	}
 }

@@ -1,0 +1,9 @@
+basePackeges: cn.featherfly,org.yufei   
+configFiles: 
+  - importConstant.yaml
+  - Constant-Role3.yaml
+reParse: true
+parsers: > 
+        cn.featherfly.conversion.parse.ClassParser
+        ,cn.featherfly.conversion.parse.JsonBeanPropertyParser
+        ,cn.featherfly.constant.parse.ConstantParser

@@ -1,15 +1,25 @@
 package cn.featherfly.constant;
 
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import cn.featherfly.common.bean.BeanDescriptor;
+import cn.featherfly.common.bean.BeanProperty;
+import cn.featherfly.common.bean.NoSuchPropertyException;
+import cn.featherfly.constant.configuration.ConstantParameter;
 import cn.featherfly.conversion.core.ConversionPolicy;
 import cn.featherfly.conversion.parse.ParsePolity;
 
@@ -22,105 +32,197 @@ import cn.featherfly.conversion.parse.ParsePolity;
  */
 public class YAMLConfigurator extends AbstractConfigurator {
 
-	private final ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
-	// ********************************************************************
-	// 构造方法
-	// ********************************************************************
+    // ********************************************************************
+    // 构造方法
+    // ********************************************************************
 
-	/**
-	 * @param fileName fileName
-	 * @param conversionPolicy
-	 *            conversionPolicy
-	 * @param parsePolity
-	 *            parsePolity
-	 */
-	YAMLConfigurator(String fileName, ConversionPolicy conversionPolicy, ParsePolity parsePolity) {
-		this(fileName, conversionPolicy, parsePolity, new ConstantPool());
-	}
+    /**
+     * @param fileName
+     *            fileName
+     * @param conversionPolicy
+     *            conversionPolicy
+     * @param parsePolity
+     *            parsePolity
+     */
+    YAMLConfigurator(String fileName, ConversionPolicy conversionPolicy,
+            ParsePolity parsePolity) {
+        this(fileName, conversionPolicy, parsePolity, new ConstantPool());
+    }
 
-	/**
-	 * @param fileName fileName
-	 * @param conversionPolicy
-	 *            conversionPolicy
-	 * @param parsePolity
-	 *            parsePolity
-	 * @param constantPool
-	 *            constantPool
-	 */
-	YAMLConfigurator(String fileName, ConversionPolicy conversionPolicy, ParsePolity parsePolity, ConstantPool constantPool) {
-		super(fileName, conversionPolicy, parsePolity, constantPool);
-		mapper = new ObjectMapper(new YAMLFactory());
-	}
+    /**
+     * @param fileName
+     *            fileName
+     * @param conversionPolicy
+     *            conversionPolicy
+     * @param parsePolity
+     *            parsePolity
+     * @param constantPool
+     *            constantPool
+     */
+    YAMLConfigurator(String fileName, ConversionPolicy conversionPolicy,
+            ParsePolity parsePolity, ConstantPool constantPool) {
+        super(fileName, conversionPolicy, parsePolity, constantPool);
+        mapper = new ObjectMapper(new YAMLFactory());
+    }
 
-	// ********************************************************************
-	// 方法
-	// ********************************************************************
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected List<Object> readCfg(URL cfgFile) {
-		List<Object> constantList = new ArrayList<Object>();
-		try {
-			JsonNode jsonNode = mapper.readValue(cfgFile, JsonNode.class);
-			Iterator<Entry<String, JsonNode>> fieldsIter = jsonNode.fields();
-			while(fieldsIter.hasNext()) {
-				Entry<String, JsonNode> entry = fieldsIter.next();
-				Object constant = createConfigObject(entry.getKey(), entry.getValue());
-				if (constant != null) {
-					constantList.add(constant);
-				}
-				
-			}
-		} catch (Exception e) {
-			logger.error("开始读取常量配置文件{}时发生错误：{}", cfgFile.getPath(), e.getMessage());
-		}
-		return constantList;
-	}
+    // ********************************************************************
+    // 方法
+    // ********************************************************************
 
-	// ********************************************************************
-	// private method
-	// ********************************************************************
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected List<Object> readCfg(URL cfgFile) {
+        List<Object> constantList = new ArrayList<>();
+        try {
+            JsonNode jsonNode = mapper.readValue(cfgFile, JsonNode.class);
+            Map<String, JsonNode> constantParameterMap = new HashMap<>();
+            Map<String, JsonNode> constantMap = new HashMap<>();
+            Iterator<Entry<String, JsonNode>> fieldsIter = jsonNode.fields();
+            while (fieldsIter.hasNext()) {
+                Entry<String, JsonNode> entry = fieldsIter.next();
+                System.err.println(entry);
+                if (entry.getKey().contains(".")) {
+                    constantMap.put(entry.getKey(), entry.getValue());
+                } else {
+                    constantParameterMap.put(entry.getKey(), entry.getValue());
+                }
+            }
 
-	// 从配置文件创建配置对象
-	private Object createConfigObject(String className, JsonNode propertiesNode) {
-		Object obj = null;
-		try {
-			Class<?> type = Class.forName(className);
-			if (filter(type)) {
-				logger.debug("filter type {}", type.getName());
-				return null;
-			}
-			obj = type.newInstance();
-			logger.debug("new instance for type {}", type.getName());
-			
-			Iterator<Entry<String, JsonNode>> propertiesIter = propertiesNode.fields();
-			while(propertiesIter.hasNext()) {
-				Entry<String, JsonNode> property = propertiesIter.next();				
-				String name = property.getKey();
-				String value = property.getValue().asText();
-				setProperty(obj, name, value);
-			}			
-		} catch (ClassNotFoundException e) {
-			throw new ConstantException(String.format("常量配置类%s没有找到", className));
-		} catch (Exception e) {
-			throw new ConstantException(String.format("常量配置类%s生成对象时发生异常：%s", className, e.getMessage()));
-		}
-		return obj;
-	}
+            if (!constantParameterMap.isEmpty()) {
+                ConstantParameter constantParameter = new ConstantParameter();
+                Object constant = createConfigObject(constantParameter,
+                        constantParameterMap.entrySet().iterator());
+                if (constant != null) {
+                    constantList.add(constant);
+                }
+            }
+            addConstant(ConstantParameter.class.getName(), jsonNode,
+                    constantList);
+            constantMap.forEach((k, v) -> {
+                addConstant(k, jsonNode, constantList);
+            });
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected boolean match(String fileExtName) {
-		return "yaml".equalsIgnoreCase(fileExtName);
-	}
+        } catch (Exception e) {
+            logger.error("开始读取常量配置文件{}时发生错误：{}", cfgFile.getPath(),
+                    e.getMessage());
+        }
+        return constantList;
+    }
 
-	// ********************************************************************
-	// 属性
-	// ********************************************************************
+    private void addConstant(String className, JsonNode jsonNode,
+            List<Object> constantList) {
+        Object constant = createConfigObject(ConstantParameter.class.getName(),
+                jsonNode);
+        if (constant != null) {
+            constantList.add(constant);
+        }
+    }
+
+    // ********************************************************************
+    // private method
+    // ********************************************************************
+
+    // 从配置文件创建配置对象
+    private Object createConfigObject(String className,
+            JsonNode propertiesNode) {
+        Object obj = null;
+        try {
+            Class<?> type = Class.forName(className);
+            if (filter(type)) {
+                logger.debug("filter type {}", type.getName());
+                return null;
+            }
+            obj = type.newInstance();
+            logger.debug("new instance for type {}", type.getName());
+        } catch (ClassNotFoundException e) {
+            throw new ConstantException(
+                    String.format("常量配置类%s没有找到", className));
+        } catch (Exception e) {
+            throw new ConstantException(String.format("常量配置类%s生成对象时发生异常：%s",
+                    className, e.getMessage()));
+        }
+
+        createConfigObject(className, propertiesNode.fields());
+        return obj;
+    }
+
+    private Object createConfigObject(Object obj,
+            Iterator<Entry<String, JsonNode>> propertiesIter) {
+        try {
+            while (propertiesIter.hasNext()) {
+                Entry<String, JsonNode> property = propertiesIter.next();
+                String name = property.getKey();
+                JsonNode value = property.getValue();
+                if (value.isContainerNode()) {
+                    setProperty(obj, name, value);
+                } else {
+                    setProperty(obj, name, value.asText());
+                }
+            }
+        } catch (Exception e) {
+            throw new ConstantException(String.format("常量配置类%s生成对象时发生异常：%s",
+                    obj.getClass().getName(), e.getMessage()));
+        }
+        return obj;
+    }
+
+    private void setProperty(Object constant, String name, JsonNode value) {
+        if (org.apache.commons.lang3.StringUtils.isBlank(name)) {
+            throw new ConstantException("常量名为空");
+        }
+        if (value == null || org.apache.commons.lang3.StringUtils
+                .isBlank(value.toString())) {
+            throw new ConstantException("常量值为空");
+        }
+        try {
+            BeanDescriptor<?> bd = BeanDescriptor
+                    .getBeanDescriptor(constant.getClass());
+            BeanProperty<?> property = bd.getBeanProperty(name);
+            Type toType = property.getField().getGenericType();
+            Object propertyValue = toObject(toType, value);
+            property.setValueForce(constant, propertyValue);
+        } catch (NoSuchPropertyException e) {
+            throw new ConstantException(
+                    String.format("没有在常量配置类%s中找到属性%s，请确认配置文件",
+                            constant.getClass().getName(), name));
+        } catch (Exception e) {
+            throw new ConstantException(String.format(
+                    "为常量配置类%s属性%s设置值%s时发生异常：%s", constant.getClass().getName(),
+                    name, value, e.getMessage()));
+        }
+    }
+
+    private <T> T toObject(Type toType, JsonNode value) throws IOException {
+        if (toType instanceof ParameterizedType) {
+            final Type parameterizedType = (toType);
+            return mapper.readerFor(new TypeReference<T>() {
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public Type getType() {
+                    return parameterizedType;
+                }
+            }).readValue(value);
+        } else {
+            return mapper.readerFor((Class<?>) toType).readValue(value);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean match(String fileExtName) {
+        return "yaml".equalsIgnoreCase(fileExtName);
+    }
+
+    // ********************************************************************
+    // 属性
+    // ********************************************************************
 
 }

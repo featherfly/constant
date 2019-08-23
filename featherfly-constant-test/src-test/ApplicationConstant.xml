@@ -3,7 +3,7 @@
 	<constants class="cn.featherfly.constant.configuration.ConstantParameter">
 		<constant name="basePackeges" value="cn.featherfly,org.yufei"/>		
 <!-- 		<constant name="configFiles" value="ApplicationConstant.xml,Constant.xml,Constant.yaml"/> -->
-		<constant name="configFiles" value="ApplicationConstant.xml,Constant.yaml"/>
+		<constant name="configFiles" value="ApplicationConstant.xml,Constant.yaml,Constant-Role3.yaml"/>
 		<constant name="reParse" value="true"/>
 		<constant name="parsers">
 			cn.featherfly.conversion.parse.ClassParser
@@ -79,9 +79,5 @@
 				"name" : "actorList2"
 			}]
 		</constant>		
-        <!-- 		
-		<constant name="persons" value="constant:org.yufei.User"/>
-		<constant name="personList" value="constant:org.yufei.User"/>
-		 -->
 	</constants>
 </application>
