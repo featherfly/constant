@@ -3,7 +3,8 @@
 	<constants class="cn.featherfly.constant.configuration.ConstantParameter">
 		<constant name="basePackeges" value="cn.featherfly,org.yufei"/>		
 <!-- 		<constant name="configFiles" value="AppConstant.xml"/> -->
-<!-- 		<constant name="configFiles" value="importConstant.yaml"/> -->
+		<constant name="configFiles" value="classpath:*.yaml"/>
+		<constant name="cfgFileLoader" value="class:cn.featherfly.constant.spring.ResourcePatternResolverCfgFileLoader"/>
 		<constant name="reParse" value="true"/>
 	</constants>
 	<constants class="cn.featherfly.constant.test.ConstantTest">

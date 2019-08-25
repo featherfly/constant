@@ -3,7 +3,7 @@ package cn.featherfly.constant;
 import java.net.URL;
 import java.util.Collection;
 
-import cn.featherfly.common.lang.StringUtils;
+import cn.featherfly.common.lang.ClassLoaderUtils;
 import cn.featherfly.constant.description.ConstantClassDescription;
 
 /**
@@ -22,18 +22,34 @@ public class MulitiFileTypeConfigurator extends AbstractConfigurator {
     // ********************************************************************
 
     /**
-     * @param abstractConfigurators abstractConfigurators
+     * 
+     * @param fileName
+     * @param abstractConfigurators
      */
-    MulitiFileTypeConfigurator(String fileName, AbstractConfigurator... abstractConfigurators) {
-        super(null, null, null, null);
+    MulitiFileTypeConfigurator(String fileName,
+            AbstractConfigurator... abstractConfigurators) {
+        this(ClassLoaderUtils.getResource(fileName,
+                MulitiFileTypeConfigurator.class), abstractConfigurators);
+    }
+
+    /**
+     * 
+     * @param file
+     * @param abstractConfigurators
+     */
+    MulitiFileTypeConfigurator(URL file,
+            AbstractConfigurator... abstractConfigurators) {
+        super(file, null, null, null);
         for (AbstractConfigurator abstractConfigurator : abstractConfigurators) {
-            if (abstractConfigurator.match(StringUtils.substringAfterLast(fileName, "."))) {
+            if (abstractConfigurator.match(org.apache.commons.lang3.StringUtils
+                    .substringAfterLast(file.getPath(), "."))) {
                 configurator = abstractConfigurator;
-                logger.debug("configurator -> {}", configurator.getClass().getName());
+                logger.debug("configurator -> {}",
+                        configurator.getClass().getName());
                 return;
             }
         }
-        throw new ConstantException("不支持的文件类型[" + getFileName() + "]，扩展名不正确");
+        throw new ConstantException("不支持的文件类型[" + file.getPath() + "]，扩展名不正确");
     }
 
     /**

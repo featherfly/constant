@@ -1,0 +1,39 @@
+org.yufei.Role3:
+  name: constant:cn.featherfly.constant.test.ConstantTest#name
+  user: constant:org.yufei.User
+  person: > 
+    json:{
+      "name" : "p1",
+      "age" : 10
+    }
+  persons:
+    -
+     "name": "p_array_13"
+     "age": 21
+    -
+     "name": "p_array_23"
+     "age": 22
+  personList: [{"name" : "p_list_13","age" : 31},{"name" : "p_list_23","age" : 32}]
+  personMap: 
+    m1: 
+      name: "p_map_13"
+      age: 31
+    m2: 
+      name: "p_map_23"
+      age: 32
+  actor: >
+    json:org.yufei.Person#{
+      "name" : "actor1"
+    }
+  actors: >
+    json:org.yufei.Person#[{
+      "name" : "actors1"
+    },{
+      "name" : "actors2"
+    }]
+  actorList: >
+    json:org.yufei.Person#[{
+      "name" : "actorList1"
+    },{
+      "name" : "actorList2"
+    }]

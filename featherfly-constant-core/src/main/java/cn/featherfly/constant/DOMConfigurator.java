@@ -36,15 +36,30 @@ public class DOMConfigurator extends AbstractConfigurator {
      *            conversionPolicy
      * @param parsePolity
      *            parsePolity
+     * @param constantPool
+     *            constantPool
      */
     DOMConfigurator(String fileName, ConversionPolicy conversionPolicy,
-            ParsePolity parsePolity) {
-        this(fileName, conversionPolicy, parsePolity, new ConstantPool());
+            ParsePolity parsePolity, ConstantPool constantPool) {
+        super(fileName, conversionPolicy, parsePolity, constantPool);
     }
 
+    // /**
+    // * @param file
+    // * file
+    // * @param conversionPolicy
+    // * conversionPolicy
+    // * @param parsePolity
+    // * parsePolity
+    // */
+    // DOMConfigurator(URL file, ConversionPolicy conversionPolicy,
+    // ParsePolity parsePolity) {
+    // this(file, conversionPolicy, parsePolity, new ConstantPool());
+    // }
+
     /**
-     * @param fileName
-     *            fileName
+     * @param file
+     *            file
      * @param conversionPolicy
      *            conversionPolicy
      * @param parsePolity
@@ -52,9 +67,9 @@ public class DOMConfigurator extends AbstractConfigurator {
      * @param constantPool
      *            constantPool
      */
-    DOMConfigurator(String fileName, ConversionPolicy conversionPolicy,
+    DOMConfigurator(URL file, ConversionPolicy conversionPolicy,
             ParsePolity parsePolity, ConstantPool constantPool) {
-        super(fileName, conversionPolicy, parsePolity, constantPool);
+        super(file, conversionPolicy, parsePolity, constantPool);
     }
 
     // ********************************************************************

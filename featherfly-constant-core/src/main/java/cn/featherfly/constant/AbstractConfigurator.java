@@ -53,6 +53,8 @@ public abstract class AbstractConfigurator {
 
     protected ConstantPool constantPool;
 
+    protected URL file;
+
     protected String fileName;
 
     protected WhiteBlackListPolicy<Class<?>> filterTypePolicy;
@@ -73,6 +75,29 @@ public abstract class AbstractConfigurator {
      */
     AbstractConfigurator(String fileName, ConversionPolicy conversionPolicy,
             ParsePolity parsePolity, ConstantPool constantPool) {
+        this(ClassLoaderUtils.getResource(fileName, AbstractConfigurator.class),
+                fileName, conversionPolicy, parsePolity, constantPool);
+    }
+
+    /**
+     * @param file
+     *            file
+     * @param conversionPolicy
+     *            conversionPolicy
+     * @param parsePolity
+     *            parsePolity
+     */
+    AbstractConfigurator(URL file, ConversionPolicy conversionPolicy,
+            ParsePolity parsePolity, ConstantPool constantPool) {
+        this(file,
+                org.apache.commons.lang3.StringUtils
+                        .substringAfterLast(file.getPath(), "/"),
+                conversionPolicy, parsePolity, constantPool);
+    }
+
+    private AbstractConfigurator(URL file, String fileName,
+            ConversionPolicy conversionPolicy, ParsePolity parsePolity,
+            ConstantPool constantPool) {
         if (conversionPolicy == null) {
             beanPropertyConversion = new BeanPropertyConversion();
         } else {
@@ -82,6 +107,7 @@ public abstract class AbstractConfigurator {
         this.parsePolity = parsePolity;
         this.constantPool = constantPool;
         this.fileName = fileName;
+        this.file = file;
         filterTypePolicy = new WhiteBlackListPolicy<Class<?>>() {
             @Override
             protected boolean isEquals(Class<?> target1, Class<?> target2) {
@@ -232,20 +258,21 @@ public abstract class AbstractConfigurator {
     // 初始化加载
     protected void load() {
         if (!match(org.apache.commons.lang3.StringUtils
-                .substringAfterLast(fileName, "."))) {
-            throw new ConstantException("不支持的文件类型[" + fileName + "]，扩展名不正确");
+                .substringAfterLast(file.getPath(), "."))) {
+            throw new ConstantException(
+                    "不支持的文件类型[" + file.getPath() + "]，扩展名不正确");
         }
         Collection<Object> constantList = null;
-        logger.debug("开始从{}初始化常量配置信息", fileName);
+        logger.debug("开始从{}初始化常量配置信息", file.getPath());
         try {
             // 读取配置文件信息
-            constantList = loadConstantsFromFile(fileName);
+            constantList = loadConstantsFromFile(file);
             // 合并
             mergeConstantClass(constantList);
         } catch (Exception e) {
-            throw new ConstantException("从" + fileName + "读取常量配置信息出错", e);
+            throw new ConstantException("从" + file.getPath() + "读取常量配置信息出错", e);
         }
-        logger.debug("结束从{}初始化常量配置信息", fileName);
+        logger.debug("结束从{}初始化常量配置信息", file.getPath());
     }
 
     /**
@@ -257,17 +284,19 @@ public abstract class AbstractConfigurator {
      *            配置文件
      * @return 常量对象集合
      */
-    private Collection<Object> loadConstantsFromFile(String fileName) {
+    private Collection<Object> loadConstantsFromFile(URL cfgFile) {
         Collection<Object> constantList = new ArrayList<>();
-        logger.debug("开始从{}读取常量配置文件", fileName);
-        URL cfgFile = ClassLoaderUtils.getResource(fileName, this.getClass());
-        if (cfgFile == null) {
-            logger.debug("没有找到常量配置文件");
-        } else {
-            logger.debug("找到常量配置文件：{}", cfgFile.getPath());
-            constantList = readCfg(cfgFile);
-        }
-        logger.debug("结束从{}读取常量配置文件", fileName);
+        logger.debug("开始从{}读取常量配置文件", cfgFile.getPath());
+        // URL cfgFile = ClassLoaderUtils.getResource(fileName,
+        // this.getClass());
+        // if (cfgFile == null) {
+        // logger.debug("没有找到常量配置文件");
+        // } else {
+        // logger.debug("找到常量配置文件：{}", cfgFile.getPath());
+        // constantList = readCfg(cfgFile);
+        // }
+        constantList = readCfg(cfgFile);
+        logger.debug("结束从{}读取常量配置文件", cfgFile.getPath());
         return constantList;
     }
 
@@ -623,6 +652,15 @@ public abstract class AbstractConfigurator {
      */
     public String getFileName() {
         return fileName;
+    }
+
+    /**
+     * get file
+     * 
+     * @return file
+     */
+    public URL getFile() {
+        return file;
     }
 
     /**

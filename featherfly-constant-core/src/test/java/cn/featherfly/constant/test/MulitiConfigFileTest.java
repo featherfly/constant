@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import cn.featherfly.common.lang.ArrayUtils;
 import cn.featherfly.common.lang.ClassLoaderUtils;
@@ -26,6 +27,8 @@ import cn.featherfly.conversion.core.ConversionPolicys;
  */
 public class MulitiConfigFileTest {
 
+    ObjectMapper objectMapper;
+
     /**
      * 
      */
@@ -36,6 +39,8 @@ public class MulitiConfigFileTest {
     void before() {
         DOMConfigurator.configure(ClassLoaderUtils.getResource("log4j.xml",
                 MulitiConfigFileTest.class));
+        objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     }
 
     @Test
@@ -47,7 +52,6 @@ public class MulitiConfigFileTest {
         System.out.println(ArrayUtils.toString(p.getBasePackeges()));
         System.out.println(ArrayUtils.toString(p.getConfigFiles()));
         Collection<?> constants = configurator.getConstants();
-        ObjectMapper objectMapper = new ObjectMapper();
         for (Object constant : constants) {
             System.out.println(constant.getClass().getName());
             System.out.println(objectMapper.writerFor(constant.getClass())
@@ -64,7 +68,6 @@ public class MulitiConfigFileTest {
         System.out.println(ArrayUtils.toString(p.getBasePackeges()));
         System.out.println(ArrayUtils.toString(p.getConfigFiles()));
         Collection<?> constants = configurator.getConstants();
-        ObjectMapper objectMapper = new ObjectMapper();
         for (Object constant : constants) {
             System.out.println(constant.getClass().getName());
             System.out.println(objectMapper.writerFor(constant.getClass())
@@ -81,7 +84,6 @@ public class MulitiConfigFileTest {
         System.out.println(ArrayUtils.toString(p.getBasePackeges()));
         System.out.println(ArrayUtils.toString(p.getConfigFiles()));
         Collection<?> constants = configurator.getConstants();
-        ObjectMapper objectMapper = new ObjectMapper();
         for (Object constant : constants) {
             System.out.println(constant.getClass().getName());
             System.out.println(objectMapper.writerFor(constant.getClass())

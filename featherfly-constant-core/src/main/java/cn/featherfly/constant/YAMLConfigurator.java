@@ -45,15 +45,18 @@ public class YAMLConfigurator extends AbstractConfigurator {
      *            conversionPolicy
      * @param parsePolity
      *            parsePolity
+     * @param constantPool
+     *            constantPool
      */
     YAMLConfigurator(String fileName, ConversionPolicy conversionPolicy,
-            ParsePolity parsePolity) {
-        this(fileName, conversionPolicy, parsePolity, new ConstantPool());
+            ParsePolity parsePolity, ConstantPool constantPool) {
+        super(fileName, conversionPolicy, parsePolity, constantPool);
+        mapper = new ObjectMapper(new YAMLFactory());
     }
 
     /**
-     * @param fileName
-     *            fileName
+     * @param file
+     *            file
      * @param conversionPolicy
      *            conversionPolicy
      * @param parsePolity
@@ -61,9 +64,9 @@ public class YAMLConfigurator extends AbstractConfigurator {
      * @param constantPool
      *            constantPool
      */
-    YAMLConfigurator(String fileName, ConversionPolicy conversionPolicy,
+    YAMLConfigurator(URL file, ConversionPolicy conversionPolicy,
             ParsePolity parsePolity, ConstantPool constantPool) {
-        super(fileName, conversionPolicy, parsePolity, constantPool);
+        super(file, conversionPolicy, parsePolity, constantPool);
         mapper = new ObjectMapper(new YAMLFactory());
     }
 

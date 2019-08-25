@@ -1,6 +1,8 @@
 
 package cn.featherfly.constant.configuration;
 
+import cn.featherfly.constant.CfgFileLoader;
+import cn.featherfly.constant.ClassLoaderCfgFileLoader;
 import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.annotation.Constant;
 import cn.featherfly.constant.annotation.ConstantClass;
@@ -33,6 +35,9 @@ public class ConstantParameter {
     @Constant("用户配置文件")
     private String[] configFiles = new String[] {
             ConstantConfigurator.DEFAULT_FILE };
+
+    @Constant("配置文件加载器")
+    private CfgFileLoader cfgFileLoader = new ClassLoaderCfgFileLoader();
 
     @Constant("是否重新解析，当有解析器需要用到初始化比constant晚的内容时，可以打开此属性")
     private boolean reParse;
@@ -83,5 +88,14 @@ public class ConstantParameter {
      */
     public String[] getConfigFiles() {
         return configFiles;
+    }
+
+    /**
+     * get cfgFileLoader
+     * 
+     * @return cfgFileLoader
+     */
+    public CfgFileLoader getCfgFileLoader() {
+        return cfgFileLoader;
     }
 }

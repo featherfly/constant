@@ -1,5 +1,6 @@
 package cn.featherfly.constant;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -109,7 +110,13 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
         for (String file : config.getConfigFiles()) {
             configFiles.add(file);
         }
+        CfgFileLoader cfgFileLoader = config.getCfgFileLoader();
+
+        Set<URL> cfgFilesURL = new HashSet<>();
         for (String file : configFiles) {
+            cfgFilesURL.addAll(cfgFileLoader.load(file));
+        }
+        for (URL file : cfgFilesURL) {
             MulitiFileTypeConfigurator mulitiFileTypeConfigurator = new MulitiFileTypeConfigurator(
                     file,
                     new DOMConfigurator(file, conversionPolicy, parsePolity,
@@ -119,6 +126,17 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
             mulitiFileTypeConfigurator.load();
             configurators.add(mulitiFileTypeConfigurator);
         }
+        // for (String file : configFiles) {
+        // MulitiFileTypeConfigurator mulitiFileTypeConfigurator = new
+        // MulitiFileTypeConfigurator(
+        // file,
+        // new DOMConfigurator(file, conversionPolicy, parsePolity,
+        // constantPool),
+        // new YAMLConfigurator(file, conversionPolicy, parsePolity,
+        // constantPool));
+        // mulitiFileTypeConfigurator.load();
+        // configurators.add(mulitiFileTypeConfigurator);
+        // }
         for (AbstractConfigurator c : configurators) {
             // System.err.println("parse " + c.getClass().getName());
             c.parse(configurator.getConstants());
