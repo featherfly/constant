@@ -7,14 +7,17 @@ import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.annotation.Constant;
 import cn.featherfly.constant.annotation.ConstantClass;
 import cn.featherfly.constant.parse.ConstantParser;
+import cn.featherfly.conversion.parse.ClassFieldParser;
+import cn.featherfly.conversion.parse.ClassMethodParser;
 import cn.featherfly.conversion.parse.ClassParser;
 import cn.featherfly.conversion.parse.JsonBeanPropertyParser;
+import cn.featherfly.conversion.parse.YamlBeanPropertyParser;
 
 /**
  * <p>
  * 可配置常量组件参数.
  * </p>
- * 
+ *
  * @author 钟冀
  */
 @ConstantClass("可配置常量组件")
@@ -29,12 +32,11 @@ public class ConstantParameter {
     private String[] basePackeges;
 
     @Constant("解析字符串时的解析器")
-    private Class<?>[] parsers = new Class<?>[] { ClassParser.class,
-            ConstantParser.class, JsonBeanPropertyParser.class };
+    private Class<?>[] parsers = new Class<?>[] { ClassParser.class, ClassFieldParser.class, ClassMethodParser.class,
+            ConstantParser.class, JsonBeanPropertyParser.class, YamlBeanPropertyParser.class };
 
     @Constant("用户配置文件")
-    private String[] configFiles = new String[] {
-            ConstantConfigurator.DEFAULT_FILE };
+    private String[] configFiles = new String[] { ConstantConfigurator.DEFAULT_FILE };
 
     @Constant("配置文件加载器")
     private CfgFileLoader cfgFileLoader = new ClassLoaderCfgFileLoader();
@@ -47,7 +49,7 @@ public class ConstantParameter {
 
     /**
      * 返回开始扫描配置类的包.
-     * 
+     *
      * @return basePackeges
      */
     public String[] getBasePackeges() {
@@ -56,7 +58,7 @@ public class ConstantParameter {
 
     /**
      * 返回解析字符串时的解析器
-     * 
+     *
      * @return parsers
      */
     public Class<?>[] getParsers() {
@@ -65,7 +67,7 @@ public class ConstantParameter {
 
     /**
      * 返回是否重新解析，当有解析器需要用到初始化比constant晚的内容时，可以打开此属性
-     * 
+     *
      * @return reParse
      */
     public boolean isReParse() {
@@ -74,7 +76,7 @@ public class ConstantParameter {
 
     /**
      * 返回devMode
-     * 
+     *
      * @return devMode
      */
     public boolean isDevMode() {
@@ -83,7 +85,7 @@ public class ConstantParameter {
 
     /**
      * 返回configFiles
-     * 
+     *
      * @return configFiles
      */
     public String[] getConfigFiles() {
@@ -92,7 +94,7 @@ public class ConstantParameter {
 
     /**
      * get cfgFileLoader
-     * 
+     *
      * @return cfgFileLoader
      */
     public CfgFileLoader getCfgFileLoader() {

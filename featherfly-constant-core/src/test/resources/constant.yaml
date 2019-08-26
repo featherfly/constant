@@ -4,7 +4,7 @@ cn.featherfly.constant.configuration.ConstantParameter:
     - importConstant.yaml
     - Constant-Role3.yaml
   reParse: true
-  parsers: > 
-          cn.featherfly.conversion.parse.ClassParser
-          ,cn.featherfly.conversion.parse.JsonBeanPropertyParser
-          ,cn.featherfly.constant.parse.ConstantParser
+#  parsers: > 
+#          cn.featherfly.conversion.parse.ClassParser
+#          ,cn.featherfly.conversion.parse.JsonBeanPropertyParser
+#          ,cn.featherfly.constant.parse.ConstantParser

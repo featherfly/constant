@@ -1,11 +1,15 @@
 TODO 
     对@ConstantClass标注对象加入对接口和抽象类的支持
+
+2019-08-26
+1.5.1
+    1.ConstantParameter的Parser加入ClassFieldParser, ClassMethodParser, YamlBeanPropertyParser
     
 2019-08-25
 1.5.0
     1.默认配置文件从ApplicationConstant.xml变为constant.yaml
     2.constant.yaml加入简化支持
-        basePackeges: cn.featherfly,org.yufei   
+        basePackeges: cn.featherfly,org.yufei
         configFiles: 
           - importConstant.yaml
           - Constant-Role3.yaml
@@ -35,7 +39,7 @@ TODO
 2017-04-19
 1.4.1
 	1.升级featherfly-common到1.6.0,删除内部的WhiteBlackPolity
-	2.删除老的不再使用的类	
+	2.删除老的不再使用的类
 	3.使用java8编译
 	
 2017-04-14

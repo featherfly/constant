@@ -1,0 +1,5 @@
+basePackeges: cn.featherfly,org.yufei   
+configFiles: 
+  - importConstant.yaml
+  - Constant-Role3-2.yaml
+reParse: true

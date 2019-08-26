@@ -5,11 +5,11 @@
 <!-- 		<constant name="configFiles" value="ApplicationConstant.xml,Constant.xml,Constant.yaml"/> -->
 		<constant name="configFiles" value="ApplicationConstant.xml,importConstant.xml,Constant-Role3.yaml"/>
 		<constant name="reParse" value="true"/>
-		<constant name="parsers">
-			cn.featherfly.conversion.parse.ClassParser
-			,cn.featherfly.conversion.parse.JsonBeanPropertyParser
-			,cn.featherfly.constant.parse.ConstantParser
-		</constant>
+<!-- 		<constant name="parsers"> -->
+<!-- 			cn.featherfly.conversion.parse.ClassParser -->
+<!-- 			,cn.featherfly.conversion.parse.JsonBeanPropertyParser -->
+<!-- 			,cn.featherfly.constant.parse.ConstantParser -->
+<!-- 		</constant> -->
 	</constants>
 	<constants class="org.yufei.Role">
         <constant name="user" value="class:org.yufei.User"/>

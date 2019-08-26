@@ -22,7 +22,7 @@ import cn.featherfly.conversion.core.ConversionPolicys;
  * <p>
  * Main 类的说明放这里
  * </p>
- * 
+ *
  * @author 钟冀
  */
 public class MulitiConfigFileTest {
@@ -30,64 +30,67 @@ public class MulitiConfigFileTest {
     ObjectMapper objectMapper;
 
     /**
-     * 
+     *
      */
     public MulitiConfigFileTest() {
     }
 
     @BeforeClass
     void before() {
-        DOMConfigurator.configure(ClassLoaderUtils.getResource("log4j.xml",
-                MulitiConfigFileTest.class));
+        DOMConfigurator.configure(ClassLoaderUtils.getResource("log4j.xml", MulitiConfigFileTest.class));
         objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     }
 
     @Test
     public void test1() throws JsonProcessingException {
-        ConstantConfigurator configurator = ConstantConfigurator
-                .config(ConversionPolicys.getFormatConversionPolicy());
-        ConstantParameter p = ConstantPool.getDefault()
-                .getConstant(ConstantParameter.class);
+        ConstantConfigurator configurator = ConstantConfigurator.config(ConversionPolicys.getFormatConversionPolicy());
+        ConstantParameter p = ConstantPool.getDefault().getConstant(ConstantParameter.class);
         System.out.println(ArrayUtils.toString(p.getBasePackeges()));
         System.out.println(ArrayUtils.toString(p.getConfigFiles()));
         Collection<?> constants = configurator.getConstants();
         for (Object constant : constants) {
             System.out.println(constant.getClass().getName());
-            System.out.println(objectMapper.writerFor(constant.getClass())
-                    .writeValueAsString(constant));
+            System.out.println(objectMapper.writerFor(constant.getClass()).writeValueAsString(constant));
         }
     }
 
     @Test
     public void test2() throws JsonProcessingException {
-        ConstantConfigurator configurator = ConstantConfigurator
-                .config("constant2.yaml");
-        ConstantParameter p = ConstantPool.getDefault()
-                .getConstant(ConstantParameter.class);
+        ConstantConfigurator configurator = ConstantConfigurator.config("constant2.yaml");
+        ConstantParameter p = ConstantPool.getDefault().getConstant(ConstantParameter.class);
         System.out.println(ArrayUtils.toString(p.getBasePackeges()));
         System.out.println(ArrayUtils.toString(p.getConfigFiles()));
         Collection<?> constants = configurator.getConstants();
         for (Object constant : constants) {
             System.out.println(constant.getClass().getName());
-            System.out.println(objectMapper.writerFor(constant.getClass())
-                    .writeValueAsString(constant));
+            System.out.println(objectMapper.writerFor(constant.getClass()).writeValueAsString(constant));
         }
     }
 
     @Test
     public void test3() throws JsonProcessingException {
-        ConstantConfigurator configurator = ConstantConfigurator
-                .config("ApplicationConstant.xml");
-        ConstantParameter p = ConstantPool.getDefault()
-                .getConstant(ConstantParameter.class);
+        ConstantConfigurator configurator = ConstantConfigurator.config("ApplicationConstant.xml");
+        ConstantParameter p = ConstantPool.getDefault().getConstant(ConstantParameter.class);
         System.out.println(ArrayUtils.toString(p.getBasePackeges()));
         System.out.println(ArrayUtils.toString(p.getConfigFiles()));
         Collection<?> constants = configurator.getConstants();
         for (Object constant : constants) {
             System.out.println(constant.getClass().getName());
-            System.out.println(objectMapper.writerFor(constant.getClass())
-                    .writeValueAsString(constant));
+            System.out.println(objectMapper.writerFor(constant.getClass()).writeValueAsString(constant));
+        }
+    }
+
+    @Test
+    public void test4() throws JsonProcessingException {
+        ConstantConfigurator configurator = ConstantConfigurator.config("constant2-2.yaml");
+        ConstantParameter p = ConstantPool.getDefault().getConstant(ConstantParameter.class);
+        System.out.println(ArrayUtils.toString(p.getBasePackeges()));
+        System.out.println(ArrayUtils.toString(p.getConfigFiles()));
+        Collection<?> constants = configurator.getConstants();
+        for (Object constant : constants) {
+            System.out.println(constant.getClass().getName());
+            System.out.println(objectMapper.writerFor(constant.getClass()).writeValueAsString(constant));
         }
     }
 
