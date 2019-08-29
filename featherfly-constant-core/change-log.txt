@@ -1,6 +1,10 @@
 TODO 
     对@ConstantClass标注对象加入对接口和抽象类的支持
 
+2019
+1.5.2
+    1.升级Converssion版本
+
 2019-08-26
 1.5.1
     1.ConstantParameter的Parser加入ClassFieldParser, ClassMethodParser, YamlBeanPropertyParser

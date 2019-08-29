@@ -17,7 +17,7 @@ import cn.featherfly.common.lang.StringUtils;
 import cn.featherfly.constant.annotation.ConstantClass;
 import cn.featherfly.constant.configuration.ConstantParameter;
 import cn.featherfly.conversion.core.ConversionPolicy;
-import cn.featherfly.conversion.core.ConversionPolicysJdk8;
+import cn.featherfly.conversion.core.ConversionPolicys;
 import cn.featherfly.conversion.parse.ParsePolity;
 import cn.featherfly.conversion.parse.Parser;
 
@@ -37,11 +37,9 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
     // ********************************************************************
 
     /**
-     * @param abstractConfigurators
-     *            abstractConfigurators
+     * @param abstractConfigurators abstractConfigurators
      */
-    private ConstantConfigurator(String fileName,
-            AbstractConfigurator... abstractConfigurators) {
+    private ConstantConfigurator(String fileName, AbstractConfigurator... abstractConfigurators) {
         super(fileName, abstractConfigurators);
     }
     //
@@ -60,42 +58,34 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
     // }
 
     public static ConstantConfigurator config() {
-        return config(ConversionPolicysJdk8.getFormatConversionPolicy());
+        return config(DEFAULT_FILE);
     }
 
     public static ConstantConfigurator config(String fileName) {
-        return config(fileName,
-                ConversionPolicysJdk8.getFormatConversionPolicy(), null);
+        return config(fileName, ConversionPolicys.getFormatConversionPolicy(), null);
     }
 
-    public static ConstantConfigurator config(
-            ConversionPolicy conversionPolicy) {
+    public static ConstantConfigurator config(ConversionPolicy conversionPolicy) {
         return config(conversionPolicy, null);
     }
 
-    public static ConstantConfigurator config(ConversionPolicy conversionPolicy,
-            ParsePolity parsePolity) {
+    public static ConstantConfigurator config(ConversionPolicy conversionPolicy, ParsePolity parsePolity) {
         return config(DEFAULT_FILE, conversionPolicy, parsePolity);
     }
 
-    public static ConstantConfigurator config(String fileName,
-            ConversionPolicy conversionPolicy, ParsePolity parsePolity) {
+    public static ConstantConfigurator config(String fileName, ConversionPolicy conversionPolicy,
+            ParsePolity parsePolity) {
         ConstantParameter config = ConstantParameter.DEFAULT;
         if (parsePolity == null) {
             parsePolity = initParserPolity(config);
         }
         ConstantPool constantPool = ConstantPool.init();
-        DOMConfigurator domConfigurator = new DOMConfigurator(fileName,
-                conversionPolicy, parsePolity, constantPool);
-        domConfigurator.getFilterTypePolicy().clear().setEnableWhiteList(false)
-                .addBlack(ConstantParameter.class);
+        DOMConfigurator domConfigurator = new DOMConfigurator(fileName, conversionPolicy, parsePolity, constantPool);
+        domConfigurator.getFilterTypePolicy().clear().setEnableWhiteList(false).addBlack(ConstantParameter.class);
 
-        YAMLConfigurator yamlConfigurator = new YAMLConfigurator(fileName,
-                conversionPolicy, parsePolity, constantPool);
-        yamlConfigurator.getFilterTypePolicy().clear().setEnableWhiteList(false)
-                .addBlack(ConstantParameter.class);
-        ConstantConfigurator configurator = new ConstantConfigurator(fileName,
-                domConfigurator, yamlConfigurator);
+        YAMLConfigurator yamlConfigurator = new YAMLConfigurator(fileName, conversionPolicy, parsePolity, constantPool);
+        yamlConfigurator.getFilterTypePolicy().clear().setEnableWhiteList(false).addBlack(ConstantParameter.class);
+        ConstantConfigurator configurator = new ConstantConfigurator(fileName, domConfigurator, yamlConfigurator);
         configurator.addConstant(config, false);
         configurator.load();
         // configurator.parse(configurator.getConstants());
@@ -117,12 +107,9 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
             cfgFilesURL.addAll(cfgFileLoader.load(file));
         }
         for (URL file : cfgFilesURL) {
-            MulitiFileTypeConfigurator mulitiFileTypeConfigurator = new MulitiFileTypeConfigurator(
-                    file,
-                    new DOMConfigurator(file, conversionPolicy, parsePolity,
-                            constantPool),
-                    new YAMLConfigurator(file, conversionPolicy, parsePolity,
-                            constantPool));
+            MulitiFileTypeConfigurator mulitiFileTypeConfigurator = new MulitiFileTypeConfigurator(file,
+                    new DOMConfigurator(file, conversionPolicy, parsePolity, constantPool),
+                    new YAMLConfigurator(file, conversionPolicy, parsePolity, constantPool));
             mulitiFileTypeConfigurator.load();
             configurators.add(mulitiFileTypeConfigurator);
         }
@@ -148,13 +135,10 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
         ParsePolity parsePolity = new ParsePolity();
         for (Class<?> parserClass : config.getParsers()) {
             if (!ClassUtils.isParent(Parser.class, parserClass)) {
-                throw new ConstantException(StringUtils.format(
-                        "为[#1]的配置项parsers配置的参数[#2]不是[#3]的实现类",
-                        config.getClass().getName(), parserClass.getName(),
-                        Parser.class.getName()));
+                throw new ConstantException(StringUtils.format("为[#1]的配置项parsers配置的参数[#2]不是[#3]的实现类",
+                        config.getClass().getName(), parserClass.getName(), Parser.class.getName()));
             } else {
-                parsePolity.register(
-                        (Parser) BeanUtils.instantiateClass(parserClass));
+                parsePolity.register((Parser) BeanUtils.instantiateClass(parserClass));
             }
         }
         return parsePolity;
@@ -180,8 +164,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
      * @return 常量配置对象
      */
     private Collection<Object> scanConstants() {
-        ConstantParameter constantParameter = getConstant(
-                ConstantParameter.class);
+        ConstantParameter constantParameter = getConstant(ConstantParameter.class);
         String[] basePackages = constantParameter.getBasePackeges();
         if (LangUtils.isEmpty(basePackages)) {
             throw new ConstantException("常量对象扫描的起始包[basePackage]未指定");
@@ -196,13 +179,11 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
         for (MetadataReader metadataReader : metaSet) {
             String className = metadataReader.getClassMetadata().getClassName();
             try {
-                if (metadataReader.getAnnotationMetadata()
-                        .hasAnnotation(ConstantClass.class.getName())) {
+                if (metadataReader.getAnnotationMetadata().hasAnnotation(ConstantClass.class.getName())) {
                     typeList.add(replaceConstructors(className));
                 }
             } catch (Exception e) {
-                throw new ConstantException(String.format("常量配置类%s生成对象时发生异常：%s",
-                        className, e.getMessage()));
+                throw new ConstantException(String.format("常量配置类%s生成对象时发生异常：%s", className, e.getMessage()));
             }
         }
         typeList.forEach(type -> {
