@@ -3,7 +3,6 @@ package cn.featherfly.constant;
 import java.net.URL;
 import java.util.Collection;
 
-import cn.featherfly.common.lang.ClassLoaderUtils;
 import cn.featherfly.constant.description.ConstantClassDescription;
 
 /**
@@ -22,30 +21,24 @@ public class MulitiFileTypeConfigurator extends AbstractConfigurator {
     // ********************************************************************
 
     /**
-     * 
      * @param fileName
      * @param abstractConfigurators
      */
-    MulitiFileTypeConfigurator(String fileName,
-            AbstractConfigurator... abstractConfigurators) {
-        this(ClassLoaderUtils.getResource(fileName,
-                MulitiFileTypeConfigurator.class), abstractConfigurators);
+    MulitiFileTypeConfigurator(String fileName, AbstractConfigurator... abstractConfigurators) {
+        this(loadFile(fileName), abstractConfigurators);
     }
 
     /**
-     * 
      * @param file
      * @param abstractConfigurators
      */
-    MulitiFileTypeConfigurator(URL file,
-            AbstractConfigurator... abstractConfigurators) {
+    MulitiFileTypeConfigurator(URL file, AbstractConfigurator... abstractConfigurators) {
         super(file, null, null, null);
         for (AbstractConfigurator abstractConfigurator : abstractConfigurators) {
-            if (abstractConfigurator.match(org.apache.commons.lang3.StringUtils
-                    .substringAfterLast(file.getPath(), "."))) {
+            if (abstractConfigurator
+                    .match(org.apache.commons.lang3.StringUtils.substringAfterLast(file.getPath(), "."))) {
                 configurator = abstractConfigurator;
-                logger.debug("configurator -> {}",
-                        configurator.getClass().getName());
+                logger.debug("configurator -> {}", configurator.getClass().getName());
                 return;
             }
         }
