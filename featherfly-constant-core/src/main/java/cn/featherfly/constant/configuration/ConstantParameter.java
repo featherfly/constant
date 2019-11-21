@@ -29,7 +29,7 @@ public class ConstantParameter {
     }
 
     @Constant("开始扫描配置类的起始包")
-    private String[] basePackeges;
+    private String[] basePackeges = new String[] { "cn.featherfly" };
 
     @Constant("解析字符串时的解析器")
     private Class<?>[] parsers = new Class<?>[] { ClassParser.class, ClassFieldParser.class, ClassMethodParser.class,

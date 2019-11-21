@@ -15,7 +15,6 @@ import cn.featherfly.common.bean.BeanProperty;
 import cn.featherfly.common.bean.NoSuchPropertyException;
 import cn.featherfly.common.bean.matcher.BeanPropertyAnnotationMatcher;
 import cn.featherfly.common.lang.ArrayUtils;
-import cn.featherfly.common.lang.ClassLoaderUtils;
 import cn.featherfly.common.lang.ClassUtils;
 import cn.featherfly.common.lang.LangUtils;
 import cn.featherfly.common.policy.WhiteBlackListPolicy;
@@ -55,7 +54,7 @@ public abstract class AbstractConfigurator {
 
     protected URL file;
 
-    protected String fileName;
+    //    protected String fileName;
 
     protected WhiteBlackListPolicy<Class<?>> filterTypePolicy;
 
@@ -66,36 +65,14 @@ public abstract class AbstractConfigurator {
     // ********************************************************************
 
     /**
-     * @param fileName         fileName
-     * @param conversionPolicy conversionPolicy
-     * @param parsePolity      parsePolity
-     */
-    AbstractConfigurator(String fileName, ConversionPolicy conversionPolicy, ParsePolity parsePolity,
-            ConstantPool constantPool) {
-        this(loadFile(fileName), fileName, conversionPolicy, parsePolity, constantPool);
-    }
-
-    /**
      * @param file             file
      * @param conversionPolicy conversionPolicy
      * @param parsePolity      parsePolity
      */
     AbstractConfigurator(URL file, ConversionPolicy conversionPolicy, ParsePolity parsePolity,
             ConstantPool constantPool) {
-        this(file, org.apache.commons.lang3.StringUtils.substringAfterLast(file.getPath(), "/"), conversionPolicy,
-                parsePolity, constantPool);
-    }
-
-    protected static URL loadFile(String fileName) {
-        URL url = ClassLoaderUtils.getResource(fileName, AbstractConfigurator.class);
-        if (url == null) {
-            throw new ConstantException("未找到文件：" + fileName);
-        }
-        return url;
-    }
-
-    private AbstractConfigurator(URL file, String fileName, ConversionPolicy conversionPolicy, ParsePolity parsePolity,
-            ConstantPool constantPool) {
+        //        this(file, org.apache.commons.lang3.StringUtils.substringAfterLast(file.getPath(), "/"), conversionPolicy,
+        //                parsePolity, constantPool);
         if (conversionPolicy == null) {
             beanPropertyConversion = new BeanPropertyConversion();
         } else {
@@ -103,7 +80,6 @@ public abstract class AbstractConfigurator {
         }
         this.parsePolity = parsePolity;
         this.constantPool = constantPool;
-        this.fileName = fileName;
         this.file = file;
         filterTypePolicy = new WhiteBlackListPolicy<Class<?>>() {
             @Override
@@ -113,6 +89,26 @@ public abstract class AbstractConfigurator {
         };
         filterTypePolicy.addWhite(ConstantParameter.class);
     }
+
+    //    private AbstractConfigurator(URL file, String fileName, ConversionPolicy conversionPolicy, ParsePolity parsePolity,
+    //            ConstantPool constantPool) {
+    //        if (conversionPolicy == null) {
+    //            beanPropertyConversion = new BeanPropertyConversion();
+    //        } else {
+    //            beanPropertyConversion = new BeanPropertyConversion(conversionPolicy);
+    //        }
+    //        this.parsePolity = parsePolity;
+    //        this.constantPool = constantPool;
+    //        this.fileName = fileName;
+    //        this.file = file;
+    //        filterTypePolicy = new WhiteBlackListPolicy<Class<?>>() {
+    //            @Override
+    //            protected boolean isEquals(Class<?> target1, Class<?> target2) {
+    //                return target1 == target2;
+    //            }
+    //        };
+    //        filterTypePolicy.addWhite(ConstantParameter.class);
+    //    }
 
     // ********************************************************************
     // 方法
@@ -589,14 +585,14 @@ public abstract class AbstractConfigurator {
         return constantPool;
     }
 
-    /**
-     * 返回fileName
-     *
-     * @return fileName
-     */
-    public String getFileName() {
-        return fileName;
-    }
+    //    /**
+    //     * 返回fileName
+    //     *
+    //     * @return fileName
+    //     */
+    //    public String getFileName() {
+    //        return fileName;
+    //    }
 
     /**
      * get file

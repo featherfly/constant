@@ -1,14 +1,7 @@
-sourceSets {
-    main {
-        java {
-            srcDirs = ["src"]
-        }
-    }
-}
 	
 dependencies {
 	compile project(':featherfly-constant-core')
-	compile 'org.springframework:spring-context:5.1.8.RELEASE'
+	compile 'org.springframework:spring-context:5.2.1.RELEASE'
 }
 
 jar {

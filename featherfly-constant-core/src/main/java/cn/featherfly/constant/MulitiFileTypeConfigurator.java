@@ -21,11 +21,12 @@ public class MulitiFileTypeConfigurator extends AbstractConfigurator {
     // ********************************************************************
 
     /**
-     * @param fileName
-     * @param abstractConfigurators
+     * @param defaultConfigurator defaultConfigurator
      */
-    MulitiFileTypeConfigurator(String fileName, AbstractConfigurator... abstractConfigurators) {
-        this(loadFile(fileName), abstractConfigurators);
+    MulitiFileTypeConfigurator(DefaultConfigurator defaultConfigurator) {
+        super(null, null, null, null);
+        configurator = defaultConfigurator;
+        logger.debug("configurator -> {}", configurator.getClass().getName());
     }
 
     /**
@@ -93,14 +94,14 @@ public class MulitiFileTypeConfigurator extends AbstractConfigurator {
         return configurator.getConstantDescriptions();
     }
 
-    /**
-     * @return
-     * @see cn.featherfly.constant.AbstractConfigurator#getFileName()
-     */
-    @Override
-    public String getFileName() {
-        return configurator.getFileName();
-    }
+    //    /**
+    //     * @return
+    //     * @see cn.featherfly.constant.AbstractConfigurator#getFileName()
+    //     */
+    //    @Override
+    //    public String getFileName() {
+    //        return configurator.getFileName();
+    //    }
 
     /**
      * {@inheritDoc}

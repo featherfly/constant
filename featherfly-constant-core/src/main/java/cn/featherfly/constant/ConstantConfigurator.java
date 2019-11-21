@@ -11,6 +11,7 @@ import org.springframework.core.type.classreading.MetadataReader;
 
 import cn.featherfly.common.bean.BeanUtils;
 import cn.featherfly.common.io.ClassPathScanningProvider;
+import cn.featherfly.common.lang.ClassLoaderUtils;
 import cn.featherfly.common.lang.ClassUtils;
 import cn.featherfly.common.lang.LangUtils;
 import cn.featherfly.common.lang.StringUtils;
@@ -39,96 +40,136 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
     /**
      * @param abstractConfigurators abstractConfigurators
      */
-    private ConstantConfigurator(String fileName, AbstractConfigurator... abstractConfigurators) {
-        super(fileName, abstractConfigurators);
+    private ConstantConfigurator(URL file, AbstractConfigurator... abstractConfigurators) {
+        super(file, abstractConfigurators);
     }
-    //
-    // /**
-    // * @param conversionPolicy
-    // * conversionPolicy
-    // * @param parsePolity
-    // * parsePolity
-    // */
-    // ConstantConfigurator(String fileName, ConversionPolicy conversionPolicy,
-    // ParsePolity parsePolity, ConstantPool constantPool) {
-    // this(fileName, new DOMConfigurator(fileName, conversionPolicy,
-    // parsePolity, constantPool)
-    // , new YAMLConfigurator(fileName, conversionPolicy, parsePolity,
-    // constantPool));
-    // }
 
+    /**
+     * @param defaultConfigurator defaultConfigurator
+     */
+    public ConstantConfigurator(DefaultConfigurator defaultConfigurator) {
+        super(defaultConfigurator);
+    }
+
+    /**
+     * config
+     *
+     * @return ConstantConfigurator
+     */
     public static ConstantConfigurator config() {
-        return config(DEFAULT_FILE);
+        return config(ConversionPolicys.getFormatConversionPolicy());
     }
 
-    public static ConstantConfigurator config(String fileName) {
-        return config(fileName, ConversionPolicys.getFormatConversionPolicy(), null);
-    }
-
+    /**
+     * config
+     *
+     * @param conversionPolicy conversionPolicy
+     * @return ConstantConfigurator
+     */
     public static ConstantConfigurator config(ConversionPolicy conversionPolicy) {
         return config(conversionPolicy, null);
     }
 
+    /**
+     * config
+     *
+     * @param conversionPolicy conversionPolicy
+     * @param parsePolity      parsePolity
+     * @return ConstantConfigurator
+     */
     public static ConstantConfigurator config(ConversionPolicy conversionPolicy, ParsePolity parsePolity) {
-        return config(DEFAULT_FILE, conversionPolicy, parsePolity);
+        return config(DEFAULT_FILE, conversionPolicy, parsePolity, false);
     }
 
+    /**
+     * config
+     *
+     * @param fileName fileName
+     * @return ConstantConfigurator
+     */
+    public static ConstantConfigurator config(String fileName) {
+        return config(fileName, ConversionPolicys.getFormatConversionPolicy(), null);
+    }
+
+    /**
+     * config
+     *
+     * @param fileName         fileName
+     * @param conversionPolicy conversionPolicy
+     * @param parsePolity      parsePolity
+     * @return ConstantConfigurator
+     */
     public static ConstantConfigurator config(String fileName, ConversionPolicy conversionPolicy,
             ParsePolity parsePolity) {
+        return config(fileName, conversionPolicy, parsePolity, true);
+    }
+
+    private static ConstantConfigurator config(String fileName, ConversionPolicy conversionPolicy,
+            ParsePolity parsePolity, boolean throwExceptionWhenFileNotFound) {
         ConstantParameter config = ConstantParameter.DEFAULT;
         if (parsePolity == null) {
             parsePolity = initParserPolity(config);
         }
         ConstantPool constantPool = ConstantPool.init();
-        DOMConfigurator domConfigurator = new DOMConfigurator(fileName, conversionPolicy, parsePolity, constantPool);
-        domConfigurator.getFilterTypePolicy().clear().setEnableWhiteList(false).addBlack(ConstantParameter.class);
+        URL configFile = loadFile(fileName, throwExceptionWhenFileNotFound);
 
-        YAMLConfigurator yamlConfigurator = new YAMLConfigurator(fileName, conversionPolicy, parsePolity, constantPool);
-        yamlConfigurator.getFilterTypePolicy().clear().setEnableWhiteList(false).addBlack(ConstantParameter.class);
-        ConstantConfigurator configurator = new ConstantConfigurator(fileName, domConfigurator, yamlConfigurator);
-        configurator.addConstant(config, false);
-        configurator.load();
-        // configurator.parse(configurator.getConstants());
-        config = configurator.getConstant(config.getClass());
+        ConstantConfigurator configurator = null;
+        if (configFile == null) {
+            configurator = new ConstantConfigurator(
+                    new DefaultConfigurator(conversionPolicy, parsePolity, constantPool));
+            configurator.addConstant(config, false);
 
-        // Collection<Object> constants =
-        configurator.scanConstants();
-        List<AbstractConfigurator> configurators = new ArrayList<>();
+            config = configurator.getConstant(config.getClass());
+            configurator.scanConstants();
+        } else {
+            DOMConfigurator domConfigurator = new DOMConfigurator(configFile, conversionPolicy, parsePolity,
+                    constantPool);
+            domConfigurator.getFilterTypePolicy().clear().setEnableWhiteList(false).addBlack(ConstantParameter.class);
 
-        Set<String> configFiles = new HashSet<>();
-        configFiles.add(fileName);
-        for (String file : config.getConfigFiles()) {
-            configFiles.add(file);
-        }
-        CfgFileLoader cfgFileLoader = config.getCfgFileLoader();
+            YAMLConfigurator yamlConfigurator = new YAMLConfigurator(configFile, conversionPolicy, parsePolity,
+                    constantPool);
+            yamlConfigurator.getFilterTypePolicy().clear().setEnableWhiteList(false).addBlack(ConstantParameter.class);
 
-        Set<URL> cfgFilesURL = new HashSet<>();
-        for (String file : configFiles) {
-            cfgFilesURL.addAll(cfgFileLoader.load(file));
-        }
-        for (URL file : cfgFilesURL) {
-            MulitiFileTypeConfigurator mulitiFileTypeConfigurator = new MulitiFileTypeConfigurator(file,
-                    new DOMConfigurator(file, conversionPolicy, parsePolity, constantPool),
-                    new YAMLConfigurator(file, conversionPolicy, parsePolity, constantPool));
-            mulitiFileTypeConfigurator.load();
-            configurators.add(mulitiFileTypeConfigurator);
-        }
-        // for (String file : configFiles) {
-        // MulitiFileTypeConfigurator mulitiFileTypeConfigurator = new
-        // MulitiFileTypeConfigurator(
-        // file,
-        // new DOMConfigurator(file, conversionPolicy, parsePolity,
-        // constantPool),
-        // new YAMLConfigurator(file, conversionPolicy, parsePolity,
-        // constantPool));
-        // mulitiFileTypeConfigurator.load();
-        // configurators.add(mulitiFileTypeConfigurator);
-        // }
-        for (AbstractConfigurator c : configurators) {
-            // System.err.println("parse " + c.getClass().getName());
-            c.parse(configurator.getConstants());
+            configurator = new ConstantConfigurator(configFile, domConfigurator, yamlConfigurator);
+            configurator.addConstant(config, false);
+            configurator.load();
+
+            config = configurator.getConstant(config.getClass());
+
+            configurator.scanConstants();
+            List<AbstractConfigurator> configurators = new ArrayList<>();
+
+            Set<String> configFiles = new HashSet<>();
+            configFiles.add(fileName);
+            for (String file : config.getConfigFiles()) {
+                configFiles.add(file);
+            }
+            CfgFileLoader cfgFileLoader = config.getCfgFileLoader();
+
+            Set<URL> cfgFilesURL = new HashSet<>();
+            for (String file : configFiles) {
+                cfgFilesURL.addAll(cfgFileLoader.load(file));
+            }
+            for (URL file : cfgFilesURL) {
+                MulitiFileTypeConfigurator mulitiFileTypeConfigurator = new MulitiFileTypeConfigurator(file,
+                        new DOMConfigurator(file, conversionPolicy, parsePolity, constantPool),
+                        new YAMLConfigurator(file, conversionPolicy, parsePolity, constantPool));
+                mulitiFileTypeConfigurator.load();
+                configurators.add(mulitiFileTypeConfigurator);
+            }
+            for (AbstractConfigurator c : configurators) {
+                c.parse(configurator.getConstants());
+            }
         }
         return configurator;
+    }
+
+    private static URL loadFile(String fileName, boolean throwExceptionWhenFileNotFound) {
+        URL url = ClassLoaderUtils.getResource(fileName, AbstractConfigurator.class);
+        if (url == null && throwExceptionWhenFileNotFound) {
+            throw new ConstantException("未找到文件：" + fileName);
+        }
+        return url;
     }
 
     private static ParsePolity initParserPolity(ConstantParameter config) {

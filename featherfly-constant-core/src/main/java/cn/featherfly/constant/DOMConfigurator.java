@@ -30,45 +30,12 @@ public class DOMConfigurator extends AbstractConfigurator {
     // ********************************************************************
 
     /**
-     * @param fileName
-     *            fileName
-     * @param conversionPolicy
-     *            conversionPolicy
-     * @param parsePolity
-     *            parsePolity
-     * @param constantPool
-     *            constantPool
+     * @param file             file
+     * @param conversionPolicy conversionPolicy
+     * @param parsePolity      parsePolity
+     * @param constantPool     constantPool
      */
-    DOMConfigurator(String fileName, ConversionPolicy conversionPolicy,
-            ParsePolity parsePolity, ConstantPool constantPool) {
-        super(fileName, conversionPolicy, parsePolity, constantPool);
-    }
-
-    // /**
-    // * @param file
-    // * file
-    // * @param conversionPolicy
-    // * conversionPolicy
-    // * @param parsePolity
-    // * parsePolity
-    // */
-    // DOMConfigurator(URL file, ConversionPolicy conversionPolicy,
-    // ParsePolity parsePolity) {
-    // this(file, conversionPolicy, parsePolity, new ConstantPool());
-    // }
-
-    /**
-     * @param file
-     *            file
-     * @param conversionPolicy
-     *            conversionPolicy
-     * @param parsePolity
-     *            parsePolity
-     * @param constantPool
-     *            constantPool
-     */
-    DOMConfigurator(URL file, ConversionPolicy conversionPolicy,
-            ParsePolity parsePolity, ConstantPool constantPool) {
+    DOMConfigurator(URL file, ConversionPolicy conversionPolicy, ParsePolity parsePolity, ConstantPool constantPool) {
         super(file, conversionPolicy, parsePolity, constantPool);
     }
 
@@ -94,10 +61,17 @@ public class DOMConfigurator extends AbstractConfigurator {
                 }
             }
         } catch (DocumentException e) {
-            logger.error("开始读取常量配置文件{}时发生错误：{}", cfgFile.getPath(),
-                    e.getMessage());
+            logger.error("开始读取常量配置文件{}时发生错误：{}", cfgFile.getPath(), e.getMessage());
         }
         return constantList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean match(String fileExtName) {
+        return "xml".equalsIgnoreCase(fileExtName);
     }
 
     // ********************************************************************
@@ -128,17 +102,4 @@ public class DOMConfigurator extends AbstractConfigurator {
         }
         return obj;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean match(String fileExtName) {
-        return "xml".equalsIgnoreCase(fileExtName);
-    }
-
-    // ********************************************************************
-    // 属性
-    // ********************************************************************
-
 }
