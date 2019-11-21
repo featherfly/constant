@@ -3,7 +3,6 @@ package cn.featherfly.constant.configuration;
 
 import cn.featherfly.constant.CfgFileLoader;
 import cn.featherfly.constant.ClassLoaderCfgFileLoader;
-import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.annotation.Constant;
 import cn.featherfly.constant.annotation.ConstantClass;
 import cn.featherfly.constant.parse.ConstantParser;
@@ -36,7 +35,7 @@ public class ConstantParameter {
             ConstantParser.class, JsonBeanPropertyParser.class, YamlBeanPropertyParser.class };
 
     @Constant("用户配置文件")
-    private String[] configFiles = new String[] { ConstantConfigurator.DEFAULT_FILE };
+    private String[] configFiles = new String[] {};
 
     @Constant("配置文件加载器")
     private CfgFileLoader cfgFileLoader = new ClassLoaderCfgFileLoader();
