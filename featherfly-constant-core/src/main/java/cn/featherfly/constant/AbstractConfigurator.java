@@ -200,9 +200,9 @@ public abstract class AbstractConfigurator {
      * 为常量赋予配置文件中的值
      * </p>
      *
-     * @param constant
-     * @param name
-     * @param value
+     * @param constant constant object
+     * @param name     property name
+     * @param value    property value
      */
     protected void setProperty(Object constant, String name, String value) {
         if (org.apache.commons.lang3.StringUtils.isBlank(name)) {
@@ -468,7 +468,6 @@ public abstract class AbstractConfigurator {
      * </p>
      *
      * @param constantType constantType
-     * @throws ConstantException
      */
     protected void check(Class<?> constantType) {
         BeanDescriptor<?> bd = BeanDescriptor.getBeanDescriptor(constantType);
