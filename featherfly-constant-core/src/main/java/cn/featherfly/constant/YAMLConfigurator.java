@@ -27,7 +27,7 @@ import cn.featherfly.conversion.parse.ParsePolity;
  * <p>
  * YAML格式可配置常量配置读取.
  * </p>
- * 
+ *
  * @author 钟冀
  */
 public class YAMLConfigurator extends AbstractConfigurator {
@@ -39,33 +39,12 @@ public class YAMLConfigurator extends AbstractConfigurator {
     // ********************************************************************
 
     /**
-     * @param fileName
-     *            fileName
-     * @param conversionPolicy
-     *            conversionPolicy
-     * @param parsePolity
-     *            parsePolity
-     * @param constantPool
-     *            constantPool
+     * @param file             file
+     * @param conversionPolicy conversionPolicy
+     * @param parsePolity      parsePolity
+     * @param constantPool     constantPool
      */
-    YAMLConfigurator(String fileName, ConversionPolicy conversionPolicy,
-            ParsePolity parsePolity, ConstantPool constantPool) {
-        super(fileName, conversionPolicy, parsePolity, constantPool);
-        mapper = new ObjectMapper(new YAMLFactory());
-    }
-
-    /**
-     * @param file
-     *            file
-     * @param conversionPolicy
-     *            conversionPolicy
-     * @param parsePolity
-     *            parsePolity
-     * @param constantPool
-     *            constantPool
-     */
-    YAMLConfigurator(URL file, ConversionPolicy conversionPolicy,
-            ParsePolity parsePolity, ConstantPool constantPool) {
+    YAMLConfigurator(URL file, ConversionPolicy conversionPolicy, ParsePolity parsePolity, ConstantPool constantPool) {
         super(file, conversionPolicy, parsePolity, constantPool);
         mapper = new ObjectMapper(new YAMLFactory());
     }
@@ -113,21 +92,26 @@ public class YAMLConfigurator extends AbstractConfigurator {
         return constantList;
     }
 
-    private void addConstant(String className, JsonNode jsonNode,
-            List<Object> constantList) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean match(String fileExtName) {
+        return "yaml".equalsIgnoreCase(fileExtName);
+    }
+
+    // ********************************************************************
+    // private method
+    // ********************************************************************
+    private void addConstant(String className, JsonNode jsonNode, List<Object> constantList) {
         Object constant = createConfigObject(className, jsonNode);
         if (constant != null) {
             constantList.add(constant);
         }
     }
 
-    // ********************************************************************
-    // private method
-    // ********************************************************************
-
     // 从配置文件创建配置对象
-    private Object createConfigObject(String className,
-            JsonNode propertiesNode) {
+    private Object createConfigObject(String className, JsonNode propertiesNode) {
         Object obj = initConstant(className);
         if (obj == null) {
             return null;
@@ -136,8 +120,7 @@ public class YAMLConfigurator extends AbstractConfigurator {
     }
 
     // 从配置文件创建配置对象
-    private Object createConfigObject(Object obj,
-            Iterator<Entry<String, JsonNode>> propertiesIter) {
+    private Object createConfigObject(Object obj, Iterator<Entry<String, JsonNode>> propertiesIter) {
         while (propertiesIter.hasNext()) {
             Entry<String, JsonNode> property = propertiesIter.next();
             String name = property.getKey();
@@ -156,31 +139,27 @@ public class YAMLConfigurator extends AbstractConfigurator {
         if (org.apache.commons.lang3.StringUtils.isBlank(name)) {
             throw new ConstantException("常量名为空");
         }
-        if (value == null || org.apache.commons.lang3.StringUtils
-                .isBlank(value.toString())) {
+        if (value == null || org.apache.commons.lang3.StringUtils.isBlank(value.toString())) {
             throw new ConstantException("常量值为空");
         }
         try {
-            BeanDescriptor<?> bd = BeanDescriptor
-                    .getBeanDescriptor(constant.getClass());
+            BeanDescriptor<?> bd = BeanDescriptor.getBeanDescriptor(constant.getClass());
             BeanProperty<?> property = bd.getBeanProperty(name);
             Type toType = property.getField().getGenericType();
             Object propertyValue = toObject(toType, value);
             property.setValueForce(constant, propertyValue);
         } catch (NoSuchPropertyException e) {
             throw new ConstantException(
-                    String.format("没有在常量配置类%s中找到属性%s，请确认配置文件",
-                            constant.getClass().getName(), name));
+                    String.format("没有在常量配置类%s中找到属性%s，请确认配置文件", constant.getClass().getName(), name));
         } catch (Exception e) {
-            throw new ConstantException(String.format(
-                    "为常量配置类%s属性%s设置值%s时发生异常：%s", constant.getClass().getName(),
-                    name, value, e.getMessage()));
+            throw new ConstantException(String.format("为常量配置类%s属性%s设置值%s时发生异常：%s", constant.getClass().getName(), name,
+                    value, e.getMessage()));
         }
     }
 
     private <T> T toObject(Type toType, JsonNode value) throws IOException {
         if (toType instanceof ParameterizedType) {
-            final Type parameterizedType = (toType);
+            final Type parameterizedType = toType;
             return mapper.readerFor(new TypeReference<T>() {
                 /**
                  * {@inheritDoc}
@@ -193,14 +172,6 @@ public class YAMLConfigurator extends AbstractConfigurator {
         } else {
             return mapper.readerFor((Class<?>) toType).readValue(value);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean match(String fileExtName) {
-        return "yaml".equalsIgnoreCase(fileExtName);
     }
 
     // ********************************************************************

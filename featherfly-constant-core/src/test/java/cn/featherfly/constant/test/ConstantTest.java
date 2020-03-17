@@ -1,6 +1,8 @@
 
 package cn.featherfly.constant.test;
 
+import java.util.Arrays;
+
 import cn.featherfly.constant.annotation.Constant;
 import cn.featherfly.constant.annotation.ConstantClass;
 
@@ -27,8 +29,7 @@ public class ConstantTest {
     @Constant("是否")
     private boolean is;
     @Constant("数字类型")
-    private Class<?>[] numberTypes = { Integer.class, Long.class, Float.class,
-            Double.class };
+    private Class<?>[] numberTypes = { Integer.class, Long.class, Float.class, Double.class };
 
     public Class<?>[] getNumberTypes() {
         return numberTypes;
@@ -44,6 +45,15 @@ public class ConstantTest {
 
     public boolean isIs() {
         return is;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "ConstantTest [name=" + name + ", age=" + age + ", is=" + is + ", numberTypes="
+                + Arrays.toString(numberTypes) + "]";
     }
 
 }

@@ -3,7 +3,6 @@ package cn.featherfly.constant;
 import java.net.URL;
 import java.util.Collection;
 
-import cn.featherfly.common.lang.ClassLoaderUtils;
 import cn.featherfly.constant.description.ConstantClassDescription;
 
 /**
@@ -22,30 +21,25 @@ public class MulitiFileTypeConfigurator extends AbstractConfigurator {
     // ********************************************************************
 
     /**
-     * 
-     * @param fileName
-     * @param abstractConfigurators
+     * @param defaultConfigurator defaultConfigurator
      */
-    MulitiFileTypeConfigurator(String fileName,
-            AbstractConfigurator... abstractConfigurators) {
-        this(ClassLoaderUtils.getResource(fileName,
-                MulitiFileTypeConfigurator.class), abstractConfigurators);
+    MulitiFileTypeConfigurator(DefaultConfigurator defaultConfigurator) {
+        super(null, null, null, null);
+        configurator = defaultConfigurator;
+        logger.debug("configurator -> {}", configurator.getClass().getName());
     }
 
     /**
-     * 
      * @param file
      * @param abstractConfigurators
      */
-    MulitiFileTypeConfigurator(URL file,
-            AbstractConfigurator... abstractConfigurators) {
+    MulitiFileTypeConfigurator(URL file, AbstractConfigurator... abstractConfigurators) {
         super(file, null, null, null);
         for (AbstractConfigurator abstractConfigurator : abstractConfigurators) {
-            if (abstractConfigurator.match(org.apache.commons.lang3.StringUtils
-                    .substringAfterLast(file.getPath(), "."))) {
+            if (abstractConfigurator
+                    .match(org.apache.commons.lang3.StringUtils.substringAfterLast(file.getPath(), "."))) {
                 configurator = abstractConfigurator;
-                logger.debug("configurator -> {}",
-                        configurator.getClass().getName());
+                logger.debug("configurator -> {}", configurator.getClass().getName());
                 return;
             }
         }
@@ -53,9 +47,7 @@ public class MulitiFileTypeConfigurator extends AbstractConfigurator {
     }
 
     /**
-     * @param type
-     * @return
-     * @see cn.featherfly.constant.AbstractConfigurator#getConstant(java.lang.Class)
+     * {@inheritDoc}
      */
     @Override
     public <T> T getConstant(Class<T> type) {
@@ -63,9 +55,7 @@ public class MulitiFileTypeConfigurator extends AbstractConfigurator {
     }
 
     /**
-     * @param type
-     * @return
-     * @see cn.featherfly.constant.AbstractConfigurator#hasConstant(java.lang.Class)
+     * {@inheritDoc}
      */
     @Override
     public boolean hasConstant(Class<?> type) {
@@ -73,8 +63,7 @@ public class MulitiFileTypeConfigurator extends AbstractConfigurator {
     }
 
     /**
-     * @return
-     * @see cn.featherfly.constant.AbstractConfigurator#getConstants()
+     * {@inheritDoc}
      */
     @Override
     public Collection<?> getConstants() {
@@ -82,9 +71,7 @@ public class MulitiFileTypeConfigurator extends AbstractConfigurator {
     }
 
     /**
-     * @param type
-     * @return
-     * @see cn.featherfly.constant.AbstractConfigurator#getConstantDescription(java.lang.Class)
+     * {@inheritDoc}
      */
     @Override
     public ConstantClassDescription getConstantDescription(Class<?> type) {
@@ -92,21 +79,11 @@ public class MulitiFileTypeConfigurator extends AbstractConfigurator {
     }
 
     /**
-     * @return
-     * @see cn.featherfly.constant.AbstractConfigurator#getConstantDescriptions()
+     * {@inheritDoc}
      */
     @Override
     public Collection<ConstantClassDescription> getConstantDescriptions() {
         return configurator.getConstantDescriptions();
-    }
-
-    /**
-     * @return
-     * @see cn.featherfly.constant.AbstractConfigurator#getFileName()
-     */
-    @Override
-    public String getFileName() {
-        return configurator.getFileName();
     }
 
     /**

@@ -3,7 +3,6 @@ package cn.featherfly.constant.configuration;
 
 import cn.featherfly.constant.CfgFileLoader;
 import cn.featherfly.constant.ClassLoaderCfgFileLoader;
-import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.annotation.Constant;
 import cn.featherfly.constant.annotation.ConstantClass;
 import cn.featherfly.constant.parse.ConstantParser;
@@ -29,14 +28,14 @@ public class ConstantParameter {
     }
 
     @Constant("开始扫描配置类的起始包")
-    private String[] basePackeges;
+    private String[] basePackeges = new String[] { "cn.featherfly" };
 
     @Constant("解析字符串时的解析器")
     private Class<?>[] parsers = new Class<?>[] { ClassParser.class, ClassFieldParser.class, ClassMethodParser.class,
             ConstantParser.class, JsonBeanPropertyParser.class, YamlBeanPropertyParser.class };
 
     @Constant("用户配置文件")
-    private String[] configFiles = new String[] { ConstantConfigurator.DEFAULT_FILE };
+    private String[] configFiles = new String[] {};
 
     @Constant("配置文件加载器")
     private CfgFileLoader cfgFileLoader = new ClassLoaderCfgFileLoader();

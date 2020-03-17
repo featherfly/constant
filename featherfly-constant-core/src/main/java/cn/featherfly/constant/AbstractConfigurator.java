@@ -15,7 +15,6 @@ import cn.featherfly.common.bean.BeanProperty;
 import cn.featherfly.common.bean.NoSuchPropertyException;
 import cn.featherfly.common.bean.matcher.BeanPropertyAnnotationMatcher;
 import cn.featherfly.common.lang.ArrayUtils;
-import cn.featherfly.common.lang.ClassLoaderUtils;
 import cn.featherfly.common.lang.ClassUtils;
 import cn.featherfly.common.lang.LangUtils;
 import cn.featherfly.common.policy.WhiteBlackListPolicy;
@@ -38,7 +37,7 @@ import javassist.NotFoundException;
  * <p>
  * AbstractConfigurator.
  * </p>
- * 
+ *
  * @author 钟冀
  */
 public abstract class AbstractConfigurator {
@@ -55,7 +54,7 @@ public abstract class AbstractConfigurator {
 
     protected URL file;
 
-    protected String fileName;
+    //    protected String fileName;
 
     protected WhiteBlackListPolicy<Class<?>> filterTypePolicy;
 
@@ -66,47 +65,21 @@ public abstract class AbstractConfigurator {
     // ********************************************************************
 
     /**
-     * @param fileName
-     *            fileName
-     * @param conversionPolicy
-     *            conversionPolicy
-     * @param parsePolity
-     *            parsePolity
+     * @param file             file
+     * @param conversionPolicy conversionPolicy
+     * @param parsePolity      parsePolity
      */
-    AbstractConfigurator(String fileName, ConversionPolicy conversionPolicy,
-            ParsePolity parsePolity, ConstantPool constantPool) {
-        this(ClassLoaderUtils.getResource(fileName, AbstractConfigurator.class),
-                fileName, conversionPolicy, parsePolity, constantPool);
-    }
-
-    /**
-     * @param file
-     *            file
-     * @param conversionPolicy
-     *            conversionPolicy
-     * @param parsePolity
-     *            parsePolity
-     */
-    AbstractConfigurator(URL file, ConversionPolicy conversionPolicy,
-            ParsePolity parsePolity, ConstantPool constantPool) {
-        this(file,
-                org.apache.commons.lang3.StringUtils
-                        .substringAfterLast(file.getPath(), "/"),
-                conversionPolicy, parsePolity, constantPool);
-    }
-
-    private AbstractConfigurator(URL file, String fileName,
-            ConversionPolicy conversionPolicy, ParsePolity parsePolity,
+    AbstractConfigurator(URL file, ConversionPolicy conversionPolicy, ParsePolity parsePolity,
             ConstantPool constantPool) {
+        //        this(file, org.apache.commons.lang3.StringUtils.substringAfterLast(file.getPath(), "/"), conversionPolicy,
+        //                parsePolity, constantPool);
         if (conversionPolicy == null) {
             beanPropertyConversion = new BeanPropertyConversion();
         } else {
-            beanPropertyConversion = new BeanPropertyConversion(
-                    conversionPolicy);
+            beanPropertyConversion = new BeanPropertyConversion(conversionPolicy);
         }
         this.parsePolity = parsePolity;
         this.constantPool = constantPool;
-        this.fileName = fileName;
         this.file = file;
         filterTypePolicy = new WhiteBlackListPolicy<Class<?>>() {
             @Override
@@ -117,6 +90,26 @@ public abstract class AbstractConfigurator {
         filterTypePolicy.addWhite(ConstantParameter.class);
     }
 
+    //    private AbstractConfigurator(URL file, String fileName, ConversionPolicy conversionPolicy, ParsePolity parsePolity,
+    //            ConstantPool constantPool) {
+    //        if (conversionPolicy == null) {
+    //            beanPropertyConversion = new BeanPropertyConversion();
+    //        } else {
+    //            beanPropertyConversion = new BeanPropertyConversion(conversionPolicy);
+    //        }
+    //        this.parsePolity = parsePolity;
+    //        this.constantPool = constantPool;
+    //        this.fileName = fileName;
+    //        this.file = file;
+    //        filterTypePolicy = new WhiteBlackListPolicy<Class<?>>() {
+    //            @Override
+    //            protected boolean isEquals(Class<?> target1, Class<?> target2) {
+    //                return target1 == target2;
+    //            }
+    //        };
+    //        filterTypePolicy.addWhite(ConstantParameter.class);
+    //    }
+
     // ********************************************************************
     // 方法
     // ********************************************************************
@@ -125,11 +118,9 @@ public abstract class AbstractConfigurator {
      * <p>
      * 获得指定类型的常量对象.
      * </p>
-     * 
-     * @param <T>
-     *            泛型
-     * @param type
-     *            指定类型
+     *
+     * @param <T>  泛型
+     * @param type 指定类型
      * @return 指定类型的常量对象
      */
     public <T> T getConstant(Class<T> type) {
@@ -140,9 +131,8 @@ public abstract class AbstractConfigurator {
      * <p>
      * 判断是否已经存在指定的常量配置类.
      * </p>
-     * 
-     * @param type
-     *            常量配置类
+     *
+     * @param type 常量配置类
      * @return 是否已经存在指定的常量配置类
      */
     public boolean hasConstant(Class<?> type) {
@@ -153,7 +143,7 @@ public abstract class AbstractConfigurator {
      * <p>
      * 返回常量对象集合.
      * </p>
-     * 
+     *
      * @return 常量对象集合
      */
     public Collection<?> getConstants() {
@@ -164,9 +154,8 @@ public abstract class AbstractConfigurator {
      * <p>
      * 获得指定类型的常量描述.
      * </p>
-     * 
-     * @param type
-     *            指定类型
+     *
+     * @param type 指定类型
      * @return 指定类型的常量描述
      */
     public ConstantClassDescription getConstantDescription(Class<?> type) {
@@ -177,7 +166,7 @@ public abstract class AbstractConfigurator {
      * <p>
      * 返回常量描述集合.
      * </p>
-     * 
+     *
      * @return 常量描述集合
      */
     public Collection<ConstantClassDescription> getConstantDescriptions() {
@@ -188,9 +177,8 @@ public abstract class AbstractConfigurator {
      * <p>
      * 从配置文件读取常量对象集合
      * </p>
-     * 
-     * @param cfgFile
-     *            配置文件
+     *
+     * @param cfgFile 配置文件
      * @return 常量对象集合
      */
     protected abstract Collection<Object> readCfg(URL cfgFile);
@@ -199,9 +187,8 @@ public abstract class AbstractConfigurator {
      * <p>
      * 是否过滤指定类型
      * </p>
-     * 
-     * @param type
-     *            type
+     *
+     * @param type type
      * @return type
      */
     protected boolean filter(Class<?> type) {
@@ -212,10 +199,10 @@ public abstract class AbstractConfigurator {
      * <p>
      * 为常量赋予配置文件中的值
      * </p>
-     * 
-     * @param constant
-     * @param name
-     * @param value
+     *
+     * @param constant constant object
+     * @param name     property name
+     * @param value    property value
      */
     protected void setProperty(Object constant, String name, String value) {
         if (org.apache.commons.lang3.StringUtils.isBlank(name)) {
@@ -226,28 +213,22 @@ public abstract class AbstractConfigurator {
         }
         String className = constant.getClass().getName();
         try {
-            BeanDescriptor<?> bd = BeanDescriptor
-                    .getBeanDescriptor(constant.getClass());
+            BeanDescriptor<?> bd = BeanDescriptor.getBeanDescriptor(constant.getClass());
             BeanProperty<?> property = bd.getBeanProperty(name);
             if (parsePolity != null && parsePolity.canParse(value)) {
-                logger.trace("使用解析策略预加载  {}.{} -> {}",
-                        new Object[] { className, name, value });
+                logger.trace("使用解析策略预加载  {}.{} -> {}", new Object[] { className, name, value });
                 // property.setValueForce(obj, parsePolity.parse(value));
                 // parsedProperty.put(className + "." + name, value);
                 parsedProperty.put(className, name, value);
             } else {
-                logger.trace("使用转换器设置值 {}.{} -> {}",
-                        new Object[] { className, name, value });
-                property.setValueForce(constant,
-                        beanPropertyConversion.toObject(value, property));
+                logger.trace("使用转换器设置值 {}.{} -> {}", new Object[] { className, name, value });
+                property.setValueForce(constant, beanPropertyConversion.toObject(value, property));
             }
         } catch (NoSuchPropertyException e) {
-            throw new ConstantException(String
-                    .format("没有在常量配置类%s中找到属性%s，请确认配置文件", className, name));
+            throw new ConstantException(String.format("没有在常量配置类%s中找到属性%s，请确认配置文件", className, name));
         } catch (Exception e) {
             throw new ConstantException(
-                    String.format("为常量配置类%s属性%s设置值%s时发生异常：%s", className, name,
-                            value, e.getMessage()));
+                    String.format("为常量配置类%s属性%s设置值%s时发生异常：%s", className, name, value, e.getMessage()));
         }
     }
 
@@ -257,10 +238,8 @@ public abstract class AbstractConfigurator {
 
     // 初始化加载
     protected void load() {
-        if (!match(org.apache.commons.lang3.StringUtils
-                .substringAfterLast(file.getPath(), "."))) {
-            throw new ConstantException(
-                    "不支持的文件类型[" + file.getPath() + "]，扩展名不正确");
+        if (!match(org.apache.commons.lang3.StringUtils.substringAfterLast(file.getPath(), "."))) {
+            throw new ConstantException("不支持的文件类型[" + file.getPath() + "]，扩展名不正确");
         }
         Collection<Object> constantList = null;
         logger.debug("开始从{}初始化常量配置信息", file.getPath());
@@ -279,9 +258,8 @@ public abstract class AbstractConfigurator {
      * <p>
      * 从配置文件读取常量对象集合
      * </p>
-     * 
-     * @param fileName
-     *            配置文件
+     *
+     * @param fileName 配置文件
      * @return 常量对象集合
      */
     private Collection<Object> loadConstantsFromFile(URL cfgFile) {
@@ -304,8 +282,7 @@ public abstract class AbstractConfigurator {
     private void mergeConstantClass(Collection<?> constantList) {
         for (Object constant : constantList) {
             if (!hasConstant(constant.getClass())) {
-                throw new ConstantException(String.format(
-                        "从%s存储的常量配置类中没有找到从配置文件中读取的%s", constantPool.toString(),
+                throw new ConstantException(String.format("从%s存储的常量配置类中没有找到从配置文件中读取的%s", constantPool.toString(),
                         constant.getClass().getName()));
             }
             addConstant(constant, true);
@@ -317,9 +294,8 @@ public abstract class AbstractConfigurator {
      * <p>
      * 延迟设置
      * </p>
-     * 
-     * @param constantList
-     *            constantList
+     *
+     * @param constantList constantList
      */
     protected void parse(Collection<?> constantList) {
         // System.err.println(parsedProperty);
@@ -332,21 +308,16 @@ public abstract class AbstractConfigurator {
             if (!parsedProperty.hasClass(className)) {
                 continue;
             }
-            BeanDescriptor<?> bd = BeanDescriptor
-                    .getBeanDescriptor(constant.getClass());
-            for (BeanProperty<?> property : bd.findBeanPropertys(
-                    new BeanPropertyAnnotationMatcher(Constant.class))) {
+            BeanDescriptor<?> bd = BeanDescriptor.getBeanDescriptor(constant.getClass());
+            for (BeanProperty<?> property : bd.findBeanPropertys(new BeanPropertyAnnotationMatcher(Constant.class))) {
                 String value = null;
                 if (parsedProperty.hasProperty(className, property.getName())) {
                     value = parsedProperty.get(className, property.getName());
                     // 延迟进行解析类设置
                     if (parsePolity != null && parsePolity.canParse(value)) {
                         logger.trace("使用解析策略设置值 {}.{} -> {}",
-                                new Object[] {
-                                        property.getOwnerType().getName(),
-                                        property.getName(), value });
-                        property.setValueForce(constant,
-                                parsePolity.parse(value, property));
+                                new Object[] { property.getOwnerType().getName(), property.getName(), value });
+                        property.setValueForce(constant, parsePolity.parse(value, property));
                     }
                     // 延迟进行解析类设置
                 }
@@ -363,8 +334,7 @@ public abstract class AbstractConfigurator {
             ClassPool pool = ClassPool.getDefault();
             try {
                 CtClass ctClass = pool.get(className);
-                if (ctClass.isInterface()
-                        || Modifier.isAbstract(ctClass.getModifiers())) {
+                if (ctClass.isInterface() || Modifier.isAbstract(ctClass.getModifiers())) {
                     // String dynamicClassName = ctClass.getPackageName() + "._"
                     // + ctClass.getSimpleName() + "DynamicImpl";
                     // CtClass dynamicCtClass =
@@ -380,12 +350,9 @@ public abstract class AbstractConfigurator {
                     // TODO 这里加入接口和抽象类的支持
                 } else {
                     boolean hasDefaultConstructor = false;
-                    for (CtConstructor ctc : ctClass
-                            .getDeclaredConstructors()) {
+                    for (CtConstructor ctc : ctClass.getDeclaredConstructors()) {
                         if (!javassist.Modifier.isPrivate(ctc.getModifiers())) {
-                            throw new ConstantException(String.format(
-                                    "@ConstantClass标注的可实例化类%s只能拥有私有构造方法",
-                                    className));
+                            throw new ConstantException(String.format("@ConstantClass标注的可实例化类%s只能拥有私有构造方法", className));
                         }
                         if (ctc.getParameterTypes().length == 0) {
                             ctc.setModifiers(javassist.Modifier.PUBLIC);
@@ -394,9 +361,7 @@ public abstract class AbstractConfigurator {
                         }
                     }
                     if (!hasDefaultConstructor) {
-                        throw new ConstantException(String.format(
-                                "@ConstantClass标注的可实例化类%s必须有没有参数的私有构造方法",
-                                className));
+                        throw new ConstantException(String.format("@ConstantClass标注的可实例化类%s必须有没有参数的私有构造方法", className));
                     }
                 }
 
@@ -410,11 +375,9 @@ public abstract class AbstractConfigurator {
                 ctClass.detach();
                 REPLACED_CLASS_MAP.put(className, type);
             } catch (NotFoundException e) {
-                throw new ConstantException(
-                        String.format("常量配置类%s没有找到", className));
+                throw new ConstantException(String.format("常量配置类%s没有找到", className));
             } catch (CannotCompileException e) {
-                throw new ConstantException(String.format("常量配置类%s预处理报错:%s",
-                        className, e.getMessage()));
+                throw new ConstantException(String.format("常量配置类%s预处理报错:%s", className, e.getMessage()));
             }
         }
         return type;
@@ -440,15 +403,13 @@ public abstract class AbstractConfigurator {
     protected Object newInstance(Class<?> constantType) {
         try {
             if (constantType == ConstantParameter.class) {
-                Constructor<?> constructor = constantType
-                        .getDeclaredConstructor(new Class<?>[0]);
+                Constructor<?> constructor = constantType.getDeclaredConstructor(new Class<?>[0]);
                 constructor.setAccessible(true);
                 return constructor.newInstance(new Object[0]);
             }
             return constantType.newInstance();
         } catch (Exception e) {
-            throw new ConstantException(String.format("常量配置类%s生成对象时发生异常：%s",
-                    constantType.getName(), e.getMessage()));
+            throw new ConstantException(String.format("常量配置类%s生成对象时发生异常：%s", constantType.getName(), e.getMessage()));
         }
     }
 
@@ -458,36 +419,26 @@ public abstract class AbstractConfigurator {
             check(constant.getClass());
         }
 
-        BeanDescriptor<?> bd = BeanDescriptor
-                .getBeanDescriptor(constant.getClass());
-        ConstantClassDescription constantClassDescription = new ConstantClassDescription(
-                constant.getClass().getName(),
-                bd.getAnnotation(ConstantClass.class).value(),
-                constant.getClass());
+        BeanDescriptor<?> bd = BeanDescriptor.getBeanDescriptor(constant.getClass());
+        ConstantClassDescription constantClassDescription = new ConstantClassDescription(constant.getClass().getName(),
+                bd.getAnnotation(ConstantClass.class).value(), constant.getClass());
 
-        for (BeanProperty<?> property : bd.findBeanPropertys(
-                new BeanPropertyAnnotationMatcher(Constant.class))) {
+        for (BeanProperty<?> property : bd.findBeanPropertys(new BeanPropertyAnnotationMatcher(Constant.class))) {
             String value = null;
 
-            if (parsedProperty.hasProperty(property.getOwnerType().getName(),
-                    property.getName())) {
-                value = parsedProperty.get(property.getOwnerType().getName(),
-                        property.getName());
+            if (parsedProperty.hasProperty(property.getOwnerType().getName(), property.getName())) {
+                value = parsedProperty.get(property.getOwnerType().getName(), property.getName());
                 // 延迟进行解析类设置
                 if (onMerge) {
                     if (parsePolity != null && parsePolity.canParse(value)) {
                         logger.trace("使用解析策略设置值 {}.{} -> {}",
-                                new Object[] {
-                                        property.getOwnerType().getName(),
-                                        property.getName(), value });
-                        property.setValueForce(constant,
-                                parsePolity.parse(value, property));
+                                new Object[] { property.getOwnerType().getName(), property.getName(), value });
+                        property.setValueForce(constant, parsePolity.parse(value, property));
                     }
                 }
                 // 延迟进行解析类设置
                 logger.trace("{}.{} -> {} 从策略缓存中读取设置",
-                        new Object[] { property.getOwnerType().getName(),
-                                property.getName(), value });
+                        new Object[] { property.getOwnerType().getName(), property.getName(), value });
             } else {
                 Object v = property.getValue(constant);
                 if (v != null) {
@@ -496,8 +447,7 @@ public abstract class AbstractConfigurator {
                     } catch (Exception e) {
                         if (v.getClass().isArray()) {
                             value = ArrayUtils.toString(v);
-                        } else if (v instanceof Collection
-                                || v instanceof Map) {
+                        } else if (v instanceof Collection || v instanceof Map) {
                             value = v.toString();
                         } else {
                             value = v.getClass().getName();
@@ -505,12 +455,9 @@ public abstract class AbstractConfigurator {
                     }
                 }
             }
-            ConstantDescription constantDescription = new ConstantDescription(
-                    property.getName(),
-                    property.getAnnotation(Constant.class).value(), value,
-                    constantClassDescription);
-            constantClassDescription
-                    .addConstantDescription(constantDescription);
+            ConstantDescription constantDescription = new ConstantDescription(property.getName(),
+                    property.getAnnotation(Constant.class).value(), value, constantClassDescription);
+            constantClassDescription.addConstantDescription(constantDescription);
         }
         constantPool.addConstant(constant, constantClassDescription);
     }
@@ -519,10 +466,8 @@ public abstract class AbstractConfigurator {
      * <p>
      * 检查常量类型是否符合规范
      * </p>
-     * 
-     * @param constantType
-     *            constantType
-     * @throws ConstantException
+     *
+     * @param constantType constantType
      */
     protected void check(Class<?> constantType) {
         BeanDescriptor<?> bd = BeanDescriptor.getBeanDescriptor(constantType);
@@ -530,20 +475,15 @@ public abstract class AbstractConfigurator {
         for (BeanProperty<?> property : bd.getBeanProperties()) {
             String name = property.getName();
             if (property.isWritable()) {
-                throw new ConstantException(String
-                        .format("常量配置类%s的属性%s不是只读，请去掉set方法", className, name));
+                throw new ConstantException(String.format("常量配置类%s的属性%s不是只读，请去掉set方法", className, name));
             }
-            Constant constantAnnotation = property
-                    .getAnnotation(Constant.class);
+            Constant constantAnnotation = property.getAnnotation(Constant.class);
             if (constantAnnotation == null) {
                 throw new ConstantException(
-                        String.format("常量配置类%s的属性%s没有被@%s注解修饰", className, name,
-                                Constant.class.getSimpleName()));
-            } else if (org.apache.commons.lang3.StringUtils
-                    .isBlank(constantAnnotation.value())) {
+                        String.format("常量配置类%s的属性%s没有被@%s注解修饰", className, name, Constant.class.getSimpleName()));
+            } else if (org.apache.commons.lang3.StringUtils.isBlank(constantAnnotation.value())) {
                 throw new ConstantException(
-                        String.format("常量配置类%s的属性%s注解@%s的描述为空", className, name,
-                                Constant.class.getSimpleName()));
+                        String.format("常量配置类%s的属性%s注解@%s的描述为空", className, name, Constant.class.getSimpleName()));
             }
         }
     }
@@ -558,8 +498,7 @@ public abstract class AbstractConfigurator {
             beanProperties = new HashMap<>();
         }
 
-        public BeanPropertyStore put(String className, String propertyName,
-                String propertyValue) {
+        public BeanPropertyStore put(String className, String propertyName, String propertyValue) {
             PropertyStore propertyStore = beanProperties.get(className);
             if (propertyStore == null) {
                 propertyStore = new PropertyStore();
@@ -638,25 +577,25 @@ public abstract class AbstractConfigurator {
 
     /**
      * 返回constantPool
-     * 
+     *
      * @return constantPool
      */
     protected ConstantPool getConstantPool() {
         return constantPool;
     }
 
-    /**
-     * 返回fileName
-     * 
-     * @return fileName
-     */
-    public String getFileName() {
-        return fileName;
-    }
+    //    /**
+    //     * 返回fileName
+    //     *
+    //     * @return fileName
+    //     */
+    //    public String getFileName() {
+    //        return fileName;
+    //    }
 
     /**
      * get file
-     * 
+     *
      * @return file
      */
     public URL getFile() {
@@ -665,7 +604,7 @@ public abstract class AbstractConfigurator {
 
     /**
      * 返回whiteBlackListPolicy
-     * 
+     *
      * @return whiteBlackListPolicy
      */
     public WhiteBlackListPolicy<Class<?>> getFilterTypePolicy() {
