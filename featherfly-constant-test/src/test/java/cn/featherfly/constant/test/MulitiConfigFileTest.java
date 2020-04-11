@@ -16,7 +16,7 @@ import cn.featherfly.common.lang.ClassLoaderUtils;
 import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.ConstantPool;
 import cn.featherfly.constant.configuration.ConstantParameter;
-import cn.featherfly.conversion.core.ConversionPolicys;
+import cn.featherfly.conversion.string.ToStringConversionPolicys;
 
 /**
  * <p>
@@ -44,7 +44,8 @@ public class MulitiConfigFileTest {
 
     @Test
     public void test1() throws JsonProcessingException {
-        ConstantConfigurator configurator = ConstantConfigurator.config(ConversionPolicys.getFormatConversionPolicy());
+        ConstantConfigurator configurator = ConstantConfigurator
+                .config(ToStringConversionPolicys.getFormatConversionPolicy());
         ConstantParameter p = ConstantPool.getDefault().getConstant(ConstantParameter.class);
         System.out.println(ArrayUtils.toString(p.getBasePackeges()));
         System.out.println(ArrayUtils.toString(p.getConfigFiles()));

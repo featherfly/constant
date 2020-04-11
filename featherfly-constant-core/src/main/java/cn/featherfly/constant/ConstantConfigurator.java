@@ -17,10 +17,10 @@ import cn.featherfly.common.lang.LangUtils;
 import cn.featherfly.common.lang.StringUtils;
 import cn.featherfly.constant.annotation.ConstantClass;
 import cn.featherfly.constant.configuration.ConstantParameter;
-import cn.featherfly.conversion.core.ConversionPolicy;
-import cn.featherfly.conversion.core.ConversionPolicys;
 import cn.featherfly.conversion.parse.ParsePolity;
 import cn.featherfly.conversion.parse.Parser;
+import cn.featherfly.conversion.string.ToStringConversionPolicy;
+import cn.featherfly.conversion.string.ToStringConversionPolicys;
 
 /**
  * <p>
@@ -57,7 +57,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
      * @return ConstantConfigurator
      */
     public static ConstantConfigurator config() {
-        return config(ConversionPolicys.getFormatConversionPolicy());
+        return config(ToStringConversionPolicys.getFormatConversionPolicy());
     }
 
     /**
@@ -66,7 +66,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
      * @param conversionPolicy conversionPolicy
      * @return ConstantConfigurator
      */
-    public static ConstantConfigurator config(ConversionPolicy conversionPolicy) {
+    public static ConstantConfigurator config(ToStringConversionPolicy conversionPolicy) {
         return config(conversionPolicy, null);
     }
 
@@ -77,7 +77,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
      * @param parsePolity      parsePolity
      * @return ConstantConfigurator
      */
-    public static ConstantConfigurator config(ConversionPolicy conversionPolicy, ParsePolity parsePolity) {
+    public static ConstantConfigurator config(ToStringConversionPolicy conversionPolicy, ParsePolity parsePolity) {
         return config(DEFAULT_FILE, conversionPolicy, parsePolity, false);
     }
 
@@ -88,7 +88,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
      * @return ConstantConfigurator
      */
     public static ConstantConfigurator config(String fileName) {
-        return config(fileName, ConversionPolicys.getFormatConversionPolicy(), null);
+        return config(fileName, ToStringConversionPolicys.getFormatConversionPolicy(), null);
     }
 
     /**
@@ -99,12 +99,12 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
      * @param parsePolity      parsePolity
      * @return ConstantConfigurator
      */
-    public static ConstantConfigurator config(String fileName, ConversionPolicy conversionPolicy,
+    public static ConstantConfigurator config(String fileName, ToStringConversionPolicy conversionPolicy,
             ParsePolity parsePolity) {
         return config(fileName, conversionPolicy, parsePolity, true);
     }
 
-    private static ConstantConfigurator config(String fileName, ConversionPolicy conversionPolicy,
+    private static ConstantConfigurator config(String fileName, ToStringConversionPolicy conversionPolicy,
             ParsePolity parsePolity, boolean throwExceptionWhenFileNotFound) {
         ConstantParameter config = ConstantParameter.DEFAULT;
         if (parsePolity == null) {

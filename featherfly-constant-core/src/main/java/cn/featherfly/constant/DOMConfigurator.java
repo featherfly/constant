@@ -9,8 +9,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import cn.featherfly.conversion.core.ConversionPolicy;
 import cn.featherfly.conversion.parse.ParsePolity;
+import cn.featherfly.conversion.string.ToStringConversionPolicy;
 
 /**
  * <p>
@@ -35,7 +35,8 @@ public class DOMConfigurator extends AbstractConfigurator {
      * @param parsePolity      parsePolity
      * @param constantPool     constantPool
      */
-    DOMConfigurator(URL file, ConversionPolicy conversionPolicy, ParsePolity parsePolity, ConstantPool constantPool) {
+    DOMConfigurator(URL file, ToStringConversionPolicy conversionPolicy, ParsePolity parsePolity,
+            ConstantPool constantPool) {
         super(file, conversionPolicy, parsePolity, constantPool);
     }
 

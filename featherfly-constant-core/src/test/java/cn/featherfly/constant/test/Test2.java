@@ -14,7 +14,7 @@ import org.yufei.User;
 
 import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.ConstantPool;
-import cn.featherfly.conversion.core.ConversionPolicys;
+import cn.featherfly.conversion.string.ToStringConversionPolicys;
 
 /**
  * <p>
@@ -77,8 +77,7 @@ public class Test2 {
     }
 
     public static void main(String[] args) {
-        ConstantConfigurator
-                .config(ConversionPolicys.getFormatConversionPolicy());
+        ConstantConfigurator.config(ToStringConversionPolicys.getFormatConversionPolicy());
         ConstantPool pool = ConstantPool.getDefault();
 
         Role role = pool.getConstant(Role.class);

@@ -4,8 +4,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.featherfly.conversion.core.ConversionPolicy;
 import cn.featherfly.conversion.parse.ParsePolity;
+import cn.featherfly.conversion.string.ToStringConversionPolicy;
 
 /**
  * <p>
@@ -26,7 +26,7 @@ public class DefaultConfigurator extends AbstractConfigurator {
      * @param parsePolity      parsePolity
      * @param constantPool     constantPool
      */
-    DefaultConfigurator(ConversionPolicy conversionPolicy, ParsePolity parsePolity, ConstantPool constantPool) {
+    DefaultConfigurator(ToStringConversionPolicy conversionPolicy, ParsePolity parsePolity, ConstantPool constantPool) {
         super(null, conversionPolicy, parsePolity, constantPool);
     }
 

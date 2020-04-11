@@ -23,9 +23,9 @@ import cn.featherfly.constant.annotation.ConstantClass;
 import cn.featherfly.constant.configuration.ConstantParameter;
 import cn.featherfly.constant.description.ConstantClassDescription;
 import cn.featherfly.constant.description.ConstantDescription;
-import cn.featherfly.conversion.core.BeanPropertyConversion;
-import cn.featherfly.conversion.core.ConversionPolicy;
 import cn.featherfly.conversion.parse.ParsePolity;
+import cn.featherfly.conversion.string.ToStringBeanPropertyConversion;
+import cn.featherfly.conversion.string.ToStringConversionPolicy;
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -46,7 +46,7 @@ public abstract class AbstractConfigurator {
 
     protected final BeanPropertyStore parsedProperty = new BeanPropertyStore();
 
-    protected BeanPropertyConversion beanPropertyConversion;
+    protected ToStringBeanPropertyConversion beanPropertyConversion;
 
     protected ParsePolity parsePolity;
 
@@ -69,14 +69,14 @@ public abstract class AbstractConfigurator {
      * @param conversionPolicy conversionPolicy
      * @param parsePolity      parsePolity
      */
-    AbstractConfigurator(URL file, ConversionPolicy conversionPolicy, ParsePolity parsePolity,
+    AbstractConfigurator(URL file, ToStringConversionPolicy conversionPolicy, ParsePolity parsePolity,
             ConstantPool constantPool) {
         //        this(file, org.apache.commons.lang3.StringUtils.substringAfterLast(file.getPath(), "/"), conversionPolicy,
         //                parsePolity, constantPool);
         if (conversionPolicy == null) {
-            beanPropertyConversion = new BeanPropertyConversion();
+            beanPropertyConversion = new ToStringBeanPropertyConversion();
         } else {
-            beanPropertyConversion = new BeanPropertyConversion(conversionPolicy);
+            beanPropertyConversion = new ToStringBeanPropertyConversion(conversionPolicy);
         }
         this.parsePolity = parsePolity;
         this.constantPool = constantPool;
@@ -222,7 +222,7 @@ public abstract class AbstractConfigurator {
                 parsedProperty.put(className, name, value);
             } else {
                 logger.trace("使用转换器设置值 {}.{} -> {}", new Object[] { className, name, value });
-                property.setValueForce(constant, beanPropertyConversion.toObject(value, property));
+                property.setValueForce(constant, beanPropertyConversion.targetToSource(value, property));
             }
         } catch (NoSuchPropertyException e) {
             throw new ConstantException(String.format("没有在常量配置类%s中找到属性%s，请确认配置文件", className, name));
@@ -414,6 +414,7 @@ public abstract class AbstractConfigurator {
     }
 
     // 添加常量
+    @SuppressWarnings("unchecked")
     protected void addConstant(Object constant, boolean onMerge) {
         if (!onMerge) {
             check(constant.getClass());
@@ -443,7 +444,7 @@ public abstract class AbstractConfigurator {
                 Object v = property.getValue(constant);
                 if (v != null) {
                     try {
-                        value = beanPropertyConversion.toString(v, property);
+                        value = beanPropertyConversion.sourceToTarget(v, (BeanProperty<Object>) property);
                     } catch (Exception e) {
                         if (v.getClass().isArray()) {
                             value = ArrayUtils.toString(v);

@@ -20,8 +20,8 @@ import cn.featherfly.common.bean.BeanDescriptor;
 import cn.featherfly.common.bean.BeanProperty;
 import cn.featherfly.common.bean.NoSuchPropertyException;
 import cn.featherfly.constant.configuration.ConstantParameter;
-import cn.featherfly.conversion.core.ConversionPolicy;
 import cn.featherfly.conversion.parse.ParsePolity;
+import cn.featherfly.conversion.string.ToStringConversionPolicy;
 
 /**
  * <p>
@@ -44,7 +44,8 @@ public class YAMLConfigurator extends AbstractConfigurator {
      * @param parsePolity      parsePolity
      * @param constantPool     constantPool
      */
-    YAMLConfigurator(URL file, ConversionPolicy conversionPolicy, ParsePolity parsePolity, ConstantPool constantPool) {
+    YAMLConfigurator(URL file, ToStringConversionPolicy conversionPolicy, ParsePolity parsePolity,
+            ConstantPool constantPool) {
         super(file, conversionPolicy, parsePolity, constantPool);
         mapper = new ObjectMapper(new YAMLFactory());
     }
