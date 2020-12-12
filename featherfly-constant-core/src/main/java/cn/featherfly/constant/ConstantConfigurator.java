@@ -31,6 +31,7 @@ import cn.featherfly.conversion.string.ToStringConversionPolicys;
  */
 public class ConstantConfigurator extends MulitiFileTypeConfigurator {
 
+    /** The Constant DEFAULT_FILE. */
     public static final String DEFAULT_FILE = "constant.yaml";
 
     // ********************************************************************
@@ -45,6 +46,8 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
     }
 
     /**
+     * Instantiates a new constant configurator.
+     *
      * @param defaultConfigurator defaultConfigurator
      */
     public ConstantConfigurator(DefaultConfigurator defaultConfigurator) {
@@ -52,7 +55,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
     }
 
     /**
-     * config
+     * config.
      *
      * @return ConstantConfigurator
      */
@@ -61,28 +64,62 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
     }
 
     /**
-     * config
+     * config.
+     *
+     * @param classLoader the class loader
+     * @return ConstantConfigurator
+     */
+    public static ConstantConfigurator config(ClassLoader classLoader) {
+        return config(ToStringConversionPolicys.getFormatConversionPolicy(), classLoader);
+    }
+
+    /**
+     * config.
      *
      * @param conversionPolicy conversionPolicy
      * @return ConstantConfigurator
      */
     public static ConstantConfigurator config(ToStringConversionPolicy conversionPolicy) {
-        return config(conversionPolicy, null);
+        return config(conversionPolicy, null, null);
     }
 
     /**
-     * config
+     * config.
+     *
+     * @param conversionPolicy conversionPolicy
+     * @param classLoader      the class loader
+     * @return ConstantConfigurator
+     */
+    public static ConstantConfigurator config(ToStringConversionPolicy conversionPolicy, ClassLoader classLoader) {
+        return config(conversionPolicy, null, classLoader);
+    }
+
+    /**
+     * config.
      *
      * @param conversionPolicy conversionPolicy
      * @param parsePolity      parsePolity
      * @return ConstantConfigurator
      */
     public static ConstantConfigurator config(ToStringConversionPolicy conversionPolicy, ParsePolity parsePolity) {
-        return config(DEFAULT_FILE, conversionPolicy, parsePolity, false);
+        return config(DEFAULT_FILE, conversionPolicy, parsePolity, null, false);
     }
 
     /**
-     * config
+     * config.
+     *
+     * @param conversionPolicy conversionPolicy
+     * @param parsePolity      parsePolity
+     * @param classLoader      the class loader
+     * @return ConstantConfigurator
+     */
+    public static ConstantConfigurator config(ToStringConversionPolicy conversionPolicy, ParsePolity parsePolity,
+            ClassLoader classLoader) {
+        return config(DEFAULT_FILE, conversionPolicy, parsePolity, classLoader, false);
+    }
+
+    /**
+     * config.
      *
      * @param fileName fileName
      * @return ConstantConfigurator
@@ -92,7 +129,18 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
     }
 
     /**
-     * config
+     * config.
+     *
+     * @param fileName    fileName
+     * @param classLoader the class loader
+     * @return ConstantConfigurator
+     */
+    public static ConstantConfigurator config(String fileName, ClassLoader classLoader) {
+        return config(fileName, ToStringConversionPolicys.getFormatConversionPolicy(), null, classLoader);
+    }
+
+    /**
+     * config.
      *
      * @param fileName         fileName
      * @param conversionPolicy conversionPolicy
@@ -101,18 +149,34 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
      */
     public static ConstantConfigurator config(String fileName, ToStringConversionPolicy conversionPolicy,
             ParsePolity parsePolity) {
-        return config(fileName, conversionPolicy, parsePolity, true);
+        return config(fileName, conversionPolicy, parsePolity, null);
+    }
+
+    /**
+     * config.
+     *
+     * @param fileName         fileName
+     * @param conversionPolicy conversionPolicy
+     * @param parsePolity      parsePolity
+     * @param classLoader      the class loader
+     * @return ConstantConfigurator
+     */
+    public static ConstantConfigurator config(String fileName, ToStringConversionPolicy conversionPolicy,
+            ParsePolity parsePolity, ClassLoader classLoader) {
+        return config(fileName, conversionPolicy, parsePolity, classLoader, true);
     }
 
     private static ConstantConfigurator config(String fileName, ToStringConversionPolicy conversionPolicy,
-            ParsePolity parsePolity, boolean throwExceptionWhenFileNotFound) {
+            ParsePolity parsePolity, ClassLoader classLoader, boolean throwExceptionWhenFileNotFound) {
         ConstantParameter config = ConstantParameter.DEFAULT;
         if (parsePolity == null) {
             parsePolity = initParserPolity(config);
         }
         ConstantPool constantPool = ConstantPool.init();
         URL configFile = loadFile(fileName, throwExceptionWhenFileNotFound);
-
+        if (classLoader == null) {
+            classLoader = Thread.currentThread().getContextClassLoader();
+        }
         ConstantConfigurator configurator = null;
         if (configFile == null) {
             configurator = new ConstantConfigurator(
@@ -120,6 +184,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
             configurator.addConstant(config, false);
 
             config = configurator.getConstant(config.getClass());
+            configurator.classLoader = classLoader;
             configurator.scanConstants();
         } else {
             DOMConfigurator domConfigurator = new DOMConfigurator(configFile, conversionPolicy, parsePolity,
@@ -135,7 +200,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
             configurator.load();
 
             config = configurator.getConstant(config.getClass());
-
+            configurator.classLoader = classLoader;
             configurator.scanConstants();
             List<AbstractConfigurator> configurators = new ArrayList<>();
 

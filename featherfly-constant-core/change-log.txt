@@ -1,6 +1,10 @@
 TODO 
     对@ConstantClass标注对象加入对接口和抽象类的支持
 
+2020-12-11
+1.6.4
+    1.ConstantConfigurator.config加入传入ClassLoader参数方法，应对fatjar打包模式
+
 2020-4-11
 1.6.3
     1.合并constant-spring到constant-core

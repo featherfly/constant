@@ -52,6 +52,8 @@ public abstract class AbstractConfigurator {
 
     protected ConstantPool constantPool;
 
+    protected ClassLoader classLoader;
+
     protected URL file;
 
     //    protected String fileName;
@@ -371,7 +373,7 @@ public abstract class AbstractConfigurator {
                 // ctConstructor.setModifiers(javassist.Modifier.PUBLIC);
                 // ctConstructor.setBody("super();");
                 // ctClass.addConstructor(ctConstructor);
-                type = ctClass.toClass();
+                type = ctClass.toClass(classLoader, ctClass.getClass().getProtectionDomain());
                 ctClass.detach();
                 REPLACED_CLASS_MAP.put(className, type);
             } catch (NotFoundException e) {
