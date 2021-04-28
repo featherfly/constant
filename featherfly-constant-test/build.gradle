@@ -1,8 +1,6 @@
 allprojects {
-    apply plugin: 'java'
-    
-    apply from: '../featherfly-constant-test/java_base.gradle'
-	apply from: '../featherfly-constant-test/maven_push.gradle'
+	apply from: rootDir.getAbsolutePath() + '/java_base.gradle'   
+    apply from: rootDir.getAbsolutePath() + '/maven_push.gradle'
     
     ext {
 	}

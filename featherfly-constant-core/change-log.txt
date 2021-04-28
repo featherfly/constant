@@ -1,6 +1,10 @@
 TODO 
     对@ConstantClass标注对象加入对接口和抽象类的支持
 
+2021-04-28
+1.6.5
+    1.修复springboot启动时javassit找不到类的问题
+    
 2020-12-11
 1.6.4
     1.ConstantConfigurator.config加入传入ClassLoader参数方法，应对fatjar打包模式

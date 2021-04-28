@@ -1,7 +1,7 @@
 	
 dependencies {
-	compile project(':featherfly-constant-core')
-	//compile 'org.springframework:spring-context:5.2.1.RELEASE'
+	api project(':featherfly-constant-core')
+	//api 'org.springframework:spring-context:5.2.1.RELEASE'
 }
 
 jar {

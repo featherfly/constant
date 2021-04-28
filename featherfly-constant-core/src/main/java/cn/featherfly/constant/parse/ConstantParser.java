@@ -3,12 +3,11 @@ package cn.featherfly.constant.parse;
 
 import cn.featherfly.common.bean.BeanUtils;
 import cn.featherfly.common.lang.GenericType;
-import cn.featherfly.common.lang.LangUtils;
+import cn.featherfly.common.lang.Lang;
 import cn.featherfly.constant.ConstantException;
 import cn.featherfly.constant.ConstantPool;
 import cn.featherfly.conversion.parse.AbstractIterableParser;
 import cn.featherfly.conversion.parse.ParseException;
-
 
 /**
  * <p>
@@ -17,7 +16,7 @@ import cn.featherfly.conversion.parse.ParseException;
  *
  * @author 钟冀
  */
-public class ConstantParser<G extends GenericType<?>> extends AbstractIterableParser<G>{
+public class ConstantParser<G extends GenericType<?>> extends AbstractIterableParser<G> {
     /**
      * 协议字符串常量
      */
@@ -42,7 +41,7 @@ public class ConstantParser<G extends GenericType<?>> extends AbstractIterablePa
     @SuppressWarnings("unchecked")
     @Override
     protected <T> T doParseContent(String content, G to) {
-        if (LangUtils.isEmpty(content) || !ConstantPool.isInit()) {
+        if (Lang.isEmpty(content) || !ConstantPool.isInit()) {
             return null;
         }
         try {
@@ -57,7 +56,7 @@ public class ConstantParser<G extends GenericType<?>> extends AbstractIterablePa
             if (constant == null) {
                 throw new ConstantException("常量池不存在指定常量" + className);
             }
-            if (LangUtils.isEmpty(propertyName)) {
+            if (Lang.isEmpty(propertyName)) {
                 return (T) constant;
             } else {
                 return (T) BeanUtils.getProperty(constant, propertyName);
@@ -77,9 +76,9 @@ public class ConstantParser<G extends GenericType<?>> extends AbstractIterablePa
     /**
      * {@inheritDoc}
      */
-   /* @Override
+    /* @Override
     protected Object doParseContent(String arg0, GenericType arg1) {
-        if (LangUtils.isEmpty(content)) {
+        if (Lang.isEmpty(content)) {
             return null;
         }
         try {
@@ -94,7 +93,7 @@ public class ConstantParser<G extends GenericType<?>> extends AbstractIterablePa
             if (constant == null) {
                 throw new ConstantException("常量池不存在指定常量" + className);
             }
-            if (LangUtils.isEmpty(propertyName)) {
+            if (Lang.isEmpty(propertyName)) {
                 return (T) constant;
             } else {
                 return (T) BeanUtils.getProperty(constant, propertyName);
@@ -103,6 +102,6 @@ public class ConstantParser<G extends GenericType<?>> extends AbstractIterablePa
             throw new ParseException(e);
         }
     }
-*/
-   
+    */
+
 }

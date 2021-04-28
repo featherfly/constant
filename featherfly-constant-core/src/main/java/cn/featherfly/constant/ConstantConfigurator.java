@@ -7,14 +7,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.core.type.classreading.MetadataReader;
 
-import cn.featherfly.common.bean.BeanUtils;
 import cn.featherfly.common.io.ClassPathScanningProvider;
 import cn.featherfly.common.lang.ClassLoaderUtils;
 import cn.featherfly.common.lang.ClassUtils;
-import cn.featherfly.common.lang.LangUtils;
-import cn.featherfly.common.lang.StringUtils;
+import cn.featherfly.common.lang.Lang;
+import cn.featherfly.common.lang.Strings;
 import cn.featherfly.constant.annotation.ConstantClass;
 import cn.featherfly.constant.configuration.ConstantParameter;
 import cn.featherfly.conversion.parse.ParsePolity;
@@ -241,7 +241,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
         ParsePolity parsePolity = new ParsePolity();
         for (Class<?> parserClass : config.getParsers()) {
             if (!ClassUtils.isParent(Parser.class, parserClass)) {
-                throw new ConstantException(StringUtils.format("为[#1]的配置项parsers配置的参数[#2]不是[#3]的实现类",
+                throw new ConstantException(Strings.format("为[{0}]的配置项parsers配置的参数[{1}]不是[{2}]的实现类",
                         config.getClass().getName(), parserClass.getName(), Parser.class.getName()));
             } else {
                 parsePolity.register((Parser) BeanUtils.instantiateClass(parserClass));
@@ -272,7 +272,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
     private Collection<Object> scanConstants() {
         ConstantParameter constantParameter = getConstant(ConstantParameter.class);
         String[] basePackages = constantParameter.getBasePackeges();
-        if (LangUtils.isEmpty(basePackages)) {
+        if (Lang.isEmpty(basePackages)) {
             throw new ConstantException("常量对象扫描的起始包[basePackage]未指定");
         }
         ClassPathScanningProvider provider = new ClassPathScanningProvider();

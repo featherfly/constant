@@ -16,7 +16,7 @@ import cn.featherfly.common.bean.NoSuchPropertyException;
 import cn.featherfly.common.bean.matcher.BeanPropertyAnnotationMatcher;
 import cn.featherfly.common.lang.ArrayUtils;
 import cn.featherfly.common.lang.ClassUtils;
-import cn.featherfly.common.lang.LangUtils;
+import cn.featherfly.common.lang.Lang;
 import cn.featherfly.common.policy.WhiteBlackListPolicy;
 import cn.featherfly.constant.annotation.Constant;
 import cn.featherfly.constant.annotation.ConstantClass;
@@ -30,6 +30,7 @@ import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
+import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
 
@@ -301,7 +302,7 @@ public abstract class AbstractConfigurator {
      */
     protected void parse(Collection<?> constantList) {
         // System.err.println(parsedProperty);
-        if (LangUtils.isEmpty(parsedProperty)) {
+        if (Lang.isEmpty(parsedProperty)) {
             return;
         }
         for (Object constant : constantList) {
@@ -334,8 +335,10 @@ public abstract class AbstractConfigurator {
         Class<?> type = REPLACED_CLASS_MAP.get(className);
         if (type == null) {
             ClassPool pool = ClassPool.getDefault();
+            pool.appendClassPath(new LoaderClassPath(classLoader));
             try {
                 CtClass ctClass = pool.get(className);
+
                 if (ctClass.isInterface() || Modifier.isAbstract(ctClass.getModifiers())) {
                     // String dynamicClassName = ctClass.getPackageName() + "._"
                     // + ctClass.getSimpleName() + "DynamicImpl";

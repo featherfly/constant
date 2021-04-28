@@ -24,9 +24,7 @@ import cn.featherfly.conversion.parse.ParsePolity;
 import cn.featherfly.conversion.string.ToStringConversionPolicy;
 
 /**
- * <p>
  * YAML格式可配置常量配置读取.
- * </p>
  *
  * @author 钟冀
  */
@@ -39,6 +37,8 @@ public class YAMLConfigurator extends AbstractConfigurator {
     // ********************************************************************
 
     /**
+     * Instantiates a new YAML configurator.
+     *
      * @param file             file
      * @param conversionPolicy conversionPolicy
      * @param parsePolity      parsePolity
