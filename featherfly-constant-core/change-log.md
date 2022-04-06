@@ -1,6 +1,9 @@
 TODO 
     对@ConstantClass标注对象加入对接口和抽象类的支持
 
+# 1.6.6 2022-04-06
+1. 修复common-core不兼容升级
+
 2021-04-28
 1.6.5
     1.修复springboot启动时javassit找不到类的问题
