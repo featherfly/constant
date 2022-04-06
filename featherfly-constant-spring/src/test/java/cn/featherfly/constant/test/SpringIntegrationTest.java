@@ -16,13 +16,6 @@ import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.ConstantPool;
 
 /**
- * <p>
- * 类的说明放这里
- * </p>
- * <p>
- * copyright featherfly 2010-2020, all rights reserved.
- * </p>
- *
  * @author 钟冀
  */
 public class SpringIntegrationTest extends TestBase {
@@ -43,16 +36,14 @@ public class SpringIntegrationTest extends TestBase {
         Roles roles = context.getBean(Roles.class);
         Role role1 = roles.role;
         Role role2 = pool.getConstant(Role.class);
-        System.out.println(
-                "context.getBean.role role.name -> " + role1.getName());
+        System.out.println("context.getBean.role role.name -> " + role1.getName());
         System.out.println("pool.getConstant role.name -> " + role2.getName());
         assertTrue(role1.equals(role2));
 
         Collection<?> constants = pool.getConstants();
         for (Object constant : constants) {
             System.out.println(constant.getClass().getName());
-            System.out.println(objectMapper.writerFor(constant.getClass())
-                    .writeValueAsString(constant));
+            System.out.println(objectMapper.writerFor(constant.getClass()).writeValueAsString(constant));
         }
     }
 }
