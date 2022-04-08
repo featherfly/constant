@@ -14,6 +14,7 @@ import cn.featherfly.common.bean.BeanDescriptor;
 import cn.featherfly.common.bean.BeanProperty;
 import cn.featherfly.common.bean.NoSuchPropertyException;
 import cn.featherfly.common.bean.matcher.BeanPropertyAnnotationMatcher;
+import cn.featherfly.common.javassist.Javassist;
 import cn.featherfly.common.lang.ArrayUtils;
 import cn.featherfly.common.lang.ClassUtils;
 import cn.featherfly.common.lang.Lang;
@@ -376,7 +377,8 @@ public abstract class AbstractConfigurator {
                 // ctConstructor.setModifiers(javassist.Modifier.PUBLIC);
                 // ctConstructor.setBody("super();");
                 // ctClass.addConstructor(ctConstructor);
-                type = ctClass.toClass(classLoader, ctClass.getClass().getProtectionDomain());
+                type = Javassist.toClass(ctClass, classLoader, type, ctClass.getClass().getProtectionDomain());
+                //                type = ctClass.toClass(classLoader, ctClass.getClass().getProtectionDomain());
                 ctClass.detach();
                 REPLACED_CLASS_MAP.put(className, type);
             } catch (NotFoundException e) {
