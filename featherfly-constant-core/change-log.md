@@ -2,7 +2,7 @@ TODO
     对@ConstantClass标注对象加入对接口和抽象类的支持
 
 # 1.6.8 2022-04-08
-1. 升级依赖用于解决依赖错误的我呢提
+1. 升级依赖用于解决依赖错误的问题
 
 # 1.6.7 2022-04-08
 1. 修复jdk17加载错误的问题
@@ -12,7 +12,8 @@ TODO
 
 # 1.6.5 2021-04-28
 1. 修复springboot启动时javassit找不到类的问题
-    
+   
+
 2020-12-11
 1.6.4
     1.ConstantConfigurator.config加入传入ClassLoader参数方法，应对fatjar打包模式
@@ -127,7 +128,7 @@ TODO
 			<constant name="user" value="constant:com.thgk.User"/>
 			2.代表从constant中查找指定类并使用指定属性赋值
 			<constant name="name" value="constant:cn.featherfly.test.ConstantTest#name"/>
-
+	
 		3.JSON支持
 			1.代表从使用JSON组装类型为com.thgk.User对象,注意#后面不能有空格，并且要跟JSON的解析符号，即#{和#[
 			<constant name="user">
