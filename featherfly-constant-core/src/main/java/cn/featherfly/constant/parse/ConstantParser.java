@@ -2,8 +2,8 @@
 package cn.featherfly.constant.parse;
 
 import cn.featherfly.common.bean.BeanUtils;
-import cn.featherfly.common.lang.GenericType;
 import cn.featherfly.common.lang.Lang;
+import cn.featherfly.common.lang.reflect.Type;
 import cn.featherfly.constant.ConstantException;
 import cn.featherfly.constant.ConstantPool;
 import cn.featherfly.conversion.parse.AbstractIterableParser;
@@ -16,7 +16,7 @@ import cn.featherfly.conversion.parse.ParseException;
  *
  * @author 钟冀
  */
-public class ConstantParser<G extends GenericType<?>> extends AbstractIterableParser<G> {
+public class ConstantParser<G extends Type<?>> extends AbstractIterableParser<G> {
     /**
      * 协议字符串常量
      */
@@ -70,14 +70,14 @@ public class ConstantParser<G extends GenericType<?>> extends AbstractIterablePa
      * {@inheritDoc}
      */
     @Override
-    protected boolean supportFor(GenericType<?> to) {
+    protected boolean supportFor(Type<?> to) {
         return true;
     }
     /**
      * {@inheritDoc}
      */
     /* @Override
-    protected Object doParseContent(String arg0, GenericType arg1) {
+    protected Object doParseContent(String arg0, Type arg1) {
         if (Lang.isEmpty(content)) {
             return null;
         }
