@@ -3,7 +3,7 @@ allprojects {
     apply from: rootDir.getAbsolutePath() + '/maven_push.gradle'
     
     ext {
-        sv = '5.3.18'
+        sv = '5.3.24'
     }
 		
 	repositories {

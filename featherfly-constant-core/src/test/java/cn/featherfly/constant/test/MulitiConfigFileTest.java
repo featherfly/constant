@@ -3,16 +3,12 @@ package cn.featherfly.constant.test;
 
 import java.util.Collection;
 
-import org.apache.log4j.xml.DOMConfigurator;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import cn.featherfly.common.lang.ArrayUtils;
-import cn.featherfly.common.lang.ClassLoaderUtils;
 import cn.featherfly.constant.ConstantConfigurator;
 import cn.featherfly.constant.ConstantPool;
 import cn.featherfly.constant.configuration.ConstantParameter;
@@ -25,9 +21,7 @@ import cn.featherfly.conversion.string.ToStringConversionPolicys;
  *
  * @author 钟冀
  */
-public class MulitiConfigFileTest {
-
-    ObjectMapper objectMapper;
+public class MulitiConfigFileTest extends TestBase {
 
     /**
      *
@@ -37,9 +31,6 @@ public class MulitiConfigFileTest {
 
     @BeforeClass
     void before() {
-        DOMConfigurator.configure(ClassLoaderUtils.getResource("log4j.xml", MulitiConfigFileTest.class));
-        objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     }
 
     @Test

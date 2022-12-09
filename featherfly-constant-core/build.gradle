@@ -1,8 +1,8 @@
 dependencies {
-    api 'cn.featherfly.common:common-core:1.10.8' // 新功能测试临时本地发布 
+    api 'cn.featherfly.common:common-core:1.11.0' 
     api 'cn.featherfly.common:common-spring:0.3.0'
     api 'cn.featherfly.common:common-javassist:0.1.1'
-    api 'cn.featherfly:featherfly-conversion:1.4.3' // 新功能测试临时本地发布 
+    api 'cn.featherfly:featherfly-conversion:1.4.3' 
     api group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.13.2'
     
     implementation 'org.dom4j:dom4j:2.1.1'
