@@ -1,9 +1,9 @@
 dependencies {
-    api 'cn.featherfly.common:common-core:1.11.0' 
-    api 'cn.featherfly.common:common-spring:0.3.0'
+    api 'cn.featherfly.common:common-core:1.15.2' 
+    api 'cn.featherfly.common:common-spring:0.4.2'
     api 'cn.featherfly.common:common-javassist:0.1.1'
-    api 'cn.featherfly:featherfly-conversion:1.4.3' 
-    api group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.13.2'
+    api 'cn.featherfly:featherfly-conversion:1.5.1' 
+    api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.20.1'
     
     implementation 'org.dom4j:dom4j:2.1.1'
     

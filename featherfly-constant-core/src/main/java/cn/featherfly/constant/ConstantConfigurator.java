@@ -14,7 +14,7 @@ import cn.featherfly.common.io.ClassPathScanningProvider;
 import cn.featherfly.common.lang.ClassLoaderUtils;
 import cn.featherfly.common.lang.ClassUtils;
 import cn.featherfly.common.lang.Lang;
-import cn.featherfly.common.lang.Strings;
+import cn.featherfly.common.lang.Str;
 import cn.featherfly.constant.annotation.ConstantClass;
 import cn.featherfly.constant.configuration.ConstantParameter;
 import cn.featherfly.conversion.parse.ParsePolity;
@@ -87,7 +87,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
      * config.
      *
      * @param conversionPolicy conversionPolicy
-     * @param classLoader      the class loader
+     * @param classLoader the class loader
      * @return ConstantConfigurator
      */
     public static ConstantConfigurator config(ToStringConversionPolicy conversionPolicy, ClassLoader classLoader) {
@@ -98,7 +98,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
      * config.
      *
      * @param conversionPolicy conversionPolicy
-     * @param parsePolity      parsePolity
+     * @param parsePolity parsePolity
      * @return ConstantConfigurator
      */
     public static ConstantConfigurator config(ToStringConversionPolicy conversionPolicy, ParsePolity parsePolity) {
@@ -109,12 +109,12 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
      * config.
      *
      * @param conversionPolicy conversionPolicy
-     * @param parsePolity      parsePolity
-     * @param classLoader      the class loader
+     * @param parsePolity parsePolity
+     * @param classLoader the class loader
      * @return ConstantConfigurator
      */
     public static ConstantConfigurator config(ToStringConversionPolicy conversionPolicy, ParsePolity parsePolity,
-            ClassLoader classLoader) {
+        ClassLoader classLoader) {
         return config(DEFAULT_FILE, conversionPolicy, parsePolity, classLoader, false);
     }
 
@@ -131,7 +131,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
     /**
      * config.
      *
-     * @param fileName    fileName
+     * @param fileName fileName
      * @param classLoader the class loader
      * @return ConstantConfigurator
      */
@@ -142,32 +142,32 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
     /**
      * config.
      *
-     * @param fileName         fileName
+     * @param fileName fileName
      * @param conversionPolicy conversionPolicy
-     * @param parsePolity      parsePolity
+     * @param parsePolity parsePolity
      * @return ConstantConfigurator
      */
     public static ConstantConfigurator config(String fileName, ToStringConversionPolicy conversionPolicy,
-            ParsePolity parsePolity) {
+        ParsePolity parsePolity) {
         return config(fileName, conversionPolicy, parsePolity, null);
     }
 
     /**
      * config.
      *
-     * @param fileName         fileName
+     * @param fileName fileName
      * @param conversionPolicy conversionPolicy
-     * @param parsePolity      parsePolity
-     * @param classLoader      the class loader
+     * @param parsePolity parsePolity
+     * @param classLoader the class loader
      * @return ConstantConfigurator
      */
     public static ConstantConfigurator config(String fileName, ToStringConversionPolicy conversionPolicy,
-            ParsePolity parsePolity, ClassLoader classLoader) {
+        ParsePolity parsePolity, ClassLoader classLoader) {
         return config(fileName, conversionPolicy, parsePolity, classLoader, true);
     }
 
     private static ConstantConfigurator config(String fileName, ToStringConversionPolicy conversionPolicy,
-            ParsePolity parsePolity, ClassLoader classLoader, boolean throwExceptionWhenFileNotFound) {
+        ParsePolity parsePolity, ClassLoader classLoader, boolean throwExceptionWhenFileNotFound) {
         ConstantParameter config = ConstantParameter.DEFAULT;
         if (parsePolity == null) {
             parsePolity = initParserPolity(config);
@@ -180,7 +180,7 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
         ConstantConfigurator configurator = null;
         if (configFile == null) {
             configurator = new ConstantConfigurator(
-                    new DefaultConfigurator(conversionPolicy, parsePolity, constantPool));
+                new DefaultConfigurator(conversionPolicy, parsePolity, constantPool));
             configurator.addConstant(config, false);
 
             config = configurator.getConstant(config.getClass());
@@ -188,11 +188,11 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
             configurator.scanConstants();
         } else {
             DOMConfigurator domConfigurator = new DOMConfigurator(configFile, conversionPolicy, parsePolity,
-                    constantPool);
+                constantPool);
             domConfigurator.getFilterTypePolicy().clear().setEnableWhiteList(false).addBlack(ConstantParameter.class);
 
             YAMLConfigurator yamlConfigurator = new YAMLConfigurator(configFile, conversionPolicy, parsePolity,
-                    constantPool);
+                constantPool);
             yamlConfigurator.getFilterTypePolicy().clear().setEnableWhiteList(false).addBlack(ConstantParameter.class);
 
             configurator = new ConstantConfigurator(configFile, domConfigurator, yamlConfigurator);
@@ -217,8 +217,8 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
             }
             for (URL file : cfgFilesURL) {
                 MulitiFileTypeConfigurator mulitiFileTypeConfigurator = new MulitiFileTypeConfigurator(file,
-                        new DOMConfigurator(file, conversionPolicy, parsePolity, constantPool),
-                        new YAMLConfigurator(file, conversionPolicy, parsePolity, constantPool));
+                    new DOMConfigurator(file, conversionPolicy, parsePolity, constantPool),
+                    new YAMLConfigurator(file, conversionPolicy, parsePolity, constantPool));
                 mulitiFileTypeConfigurator.load();
                 configurators.add(mulitiFileTypeConfigurator);
             }
@@ -241,8 +241,8 @@ public class ConstantConfigurator extends MulitiFileTypeConfigurator {
         ParsePolity parsePolity = new ParsePolity();
         for (Class<?> parserClass : config.getParsers()) {
             if (!ClassUtils.isParent(Parser.class, parserClass)) {
-                throw new ConstantException(Strings.format("为[{0}]的配置项parsers配置的参数[{1}]不是[{2}]的实现类",
-                        config.getClass().getName(), parserClass.getName(), Parser.class.getName()));
+                throw new ConstantException(Str.format("为[{0}]的配置项parsers配置的参数[{1}]不是[{2}]的实现类",
+                    config.getClass().getName(), parserClass.getName(), Parser.class.getName()));
             } else {
                 parsePolity.register((Parser) BeanUtils.instantiateClass(parserClass));
             }

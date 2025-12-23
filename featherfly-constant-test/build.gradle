@@ -1,37 +1,25 @@
+plugins {
+    id 'org.jreleaser' version '1.21.0'
+}
+
 allprojects {
-	apply from: rootDir.getAbsolutePath() + '/java_base.gradle'   
-    apply from: rootDir.getAbsolutePath() + '/maven_push.gradle'
+	apply from: rootDir.getAbsolutePath() + '/gradle/java_base.gradle'   
+    apply from: rootDir.getAbsolutePath() + '/gradle/maven_push_jreleaser.gradle'
     
     ext {
-        sv = '5.3.24'
+        sv = '5.3.39'
     }
 		
-	repositories {
-        maven {
-            url  ant.properties['user.home'] +  "/.m2/repository"
-        }
-        maven {
-        	url "http://maven.aliyun.com/nexus/content/groups/public/"
-        }
-        mavenCentral()
-    }
-
     dependencies {	    	    
-	    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+	    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
 	    
-	    //testImplementation 'org.testng:testng:6.14.3'
-        testImplementation group: 'org.testng', name: 'testng', version: '7.1.0'
-        
+	    testImplementation 'org.testng:testng:7.5.1'
+        testImplementation 'com.google.inject:guice:4.2.3'
         testImplementation 'org.slf4j:slf4j-log4j12:1.7.30'
-        testImplementation group: 'com.google.inject', name: 'guice', version: '4.2.3'
 	}
 }
 	
 dependencies {
-	compile project(':featherfly-constant-core')
+	implementation project(':featherfly-constant-core')
 	//compile project(':featherfly-constant-spring')
-}
-
-jar {
-    manifest.attributes 'Build-Name': archivesBaseName
 }

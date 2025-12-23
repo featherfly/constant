@@ -39,13 +39,13 @@ public class YAMLConfigurator extends AbstractConfigurator {
     /**
      * Instantiates a new YAML configurator.
      *
-     * @param file             file
+     * @param file file
      * @param conversionPolicy conversionPolicy
-     * @param parsePolity      parsePolity
-     * @param constantPool     constantPool
+     * @param parsePolity parsePolity
+     * @param constantPool constantPool
      */
     YAMLConfigurator(URL file, ToStringConversionPolicy conversionPolicy, ParsePolity parsePolity,
-            ConstantPool constantPool) {
+        ConstantPool constantPool) {
         super(file, conversionPolicy, parsePolity, constantPool);
         mapper = new ObjectMapper(new YAMLFactory());
     }
@@ -64,7 +64,7 @@ public class YAMLConfigurator extends AbstractConfigurator {
             JsonNode jsonNode = mapper.readValue(cfgFile, JsonNode.class);
             Map<String, JsonNode> constantParameterMap = new HashMap<>();
             Map<String, JsonNode> constantMap = new HashMap<>();
-            Iterator<Entry<String, JsonNode>> fieldsIter = jsonNode.fields();
+            Iterator<Entry<String, JsonNode>> fieldsIter = jsonNode.properties().iterator();
             while (fieldsIter.hasNext()) {
                 Entry<String, JsonNode> entry = fieldsIter.next();
                 if (entry.getKey().contains(".")) {
@@ -76,7 +76,7 @@ public class YAMLConfigurator extends AbstractConfigurator {
 
             if (!constantParameterMap.isEmpty()) {
                 Object constant = createConfigObject(ConstantParameter.DEFAULT,
-                        constantParameterMap.entrySet().iterator());
+                    constantParameterMap.entrySet().iterator());
                 if (constant != null) {
                     constantList.add(constant);
                 }
@@ -117,7 +117,7 @@ public class YAMLConfigurator extends AbstractConfigurator {
         if (obj == null) {
             return null;
         }
-        return createConfigObject(obj, propertiesNode.fields());
+        return createConfigObject(obj, propertiesNode.properties().iterator());
     }
 
     // 从配置文件创建配置对象
@@ -145,16 +145,16 @@ public class YAMLConfigurator extends AbstractConfigurator {
         }
         try {
             BeanDescriptor<?> bd = BeanDescriptor.getBeanDescriptor(constant.getClass());
-            BeanProperty<?> property = bd.getBeanProperty(name);
+            BeanProperty<?, ?> property = bd.getBeanProperty(name);
             Type toType = property.getField().getGenericType();
             Object propertyValue = toObject(toType, value);
             property.setValueForce(constant, propertyValue);
         } catch (NoSuchPropertyException e) {
             throw new ConstantException(
-                    String.format("没有在常量配置类%s中找到属性%s，请确认配置文件", constant.getClass().getName(), name));
+                String.format("没有在常量配置类%s中找到属性%s，请确认配置文件", constant.getClass().getName(), name));
         } catch (Exception e) {
-            throw new ConstantException(String.format("为常量配置类%s属性%s设置值%s时发生异常：%s", constant.getClass().getName(), name,
-                    value, e.getMessage()));
+            throw new ConstantException(
+                String.format("为常量配置类%s属性%s设置值%s时发生异常：%s", constant.getClass().getName(), name, value, e.getMessage()));
         }
     }
 

@@ -69,12 +69,12 @@ public abstract class AbstractConfigurator {
     // ********************************************************************
 
     /**
-     * @param file             file
+     * @param file file
      * @param conversionPolicy conversionPolicy
-     * @param parsePolity      parsePolity
+     * @param parsePolity parsePolity
      */
     AbstractConfigurator(URL file, ToStringConversionPolicy conversionPolicy, ParsePolity parsePolity,
-            ConstantPool constantPool) {
+        ConstantPool constantPool) {
         //        this(file, org.apache.commons.lang3.StringUtils.substringAfterLast(file.getPath(), "/"), conversionPolicy,
         //                parsePolity, constantPool);
         if (conversionPolicy == null) {
@@ -123,7 +123,7 @@ public abstract class AbstractConfigurator {
      * 获得指定类型的常量对象.
      * </p>
      *
-     * @param <T>  泛型
+     * @param <T> 泛型
      * @param type 指定类型
      * @return 指定类型的常量对象
      */
@@ -205,8 +205,8 @@ public abstract class AbstractConfigurator {
      * </p>
      *
      * @param constant constant object
-     * @param name     property name
-     * @param value    property value
+     * @param name property name
+     * @param value property value
      */
     protected void setProperty(Object constant, String name, String value) {
         if (org.apache.commons.lang3.StringUtils.isBlank(name)) {
@@ -218,7 +218,7 @@ public abstract class AbstractConfigurator {
         String className = constant.getClass().getName();
         try {
             BeanDescriptor<?> bd = BeanDescriptor.getBeanDescriptor(constant.getClass());
-            BeanProperty<?> property = bd.getBeanProperty(name);
+            BeanProperty<?, ?> property = bd.getBeanProperty(name);
             if (parsePolity != null && parsePolity.canParse(value)) {
                 logger.trace("使用解析策略预加载  {}.{} -> {}", new Object[] { className, name, value });
                 // property.setValueForce(obj, parsePolity.parse(value));
@@ -232,7 +232,7 @@ public abstract class AbstractConfigurator {
             throw new ConstantException(String.format("没有在常量配置类%s中找到属性%s，请确认配置文件", className, name));
         } catch (Exception e) {
             throw new ConstantException(
-                    String.format("为常量配置类%s属性%s设置值%s时发生异常：%s", className, name, value, e.getMessage()));
+                String.format("为常量配置类%s属性%s设置值%s时发生异常：%s", className, name, value, e.getMessage()));
         }
     }
 
@@ -287,7 +287,7 @@ public abstract class AbstractConfigurator {
         for (Object constant : constantList) {
             if (!hasConstant(constant.getClass())) {
                 throw new ConstantException(String.format("从%s存储的常量配置类中没有找到从配置文件中读取的%s", constantPool.toString(),
-                        constant.getClass().getName()));
+                    constant.getClass().getName()));
             }
             addConstant(constant, true);
         }
@@ -313,14 +313,15 @@ public abstract class AbstractConfigurator {
                 continue;
             }
             BeanDescriptor<?> bd = BeanDescriptor.getBeanDescriptor(constant.getClass());
-            for (BeanProperty<?> property : bd.findBeanPropertys(new BeanPropertyAnnotationMatcher(Constant.class))) {
+            for (BeanProperty<?, ?> property : bd
+                .findBeanPropertys(new BeanPropertyAnnotationMatcher(Constant.class))) {
                 String value = null;
                 if (parsedProperty.hasProperty(className, property.getName())) {
                     value = parsedProperty.get(className, property.getName());
                     // 延迟进行解析类设置
                     if (parsePolity != null && parsePolity.canParse(value)) {
                         logger.trace("使用解析策略设置值 {}.{} -> {}",
-                                new Object[] { property.getOwnerType().getName(), property.getName(), value });
+                            new Object[] { property.getOwnerType().getName(), property.getName(), value });
                         property.setValueForce(constant, parsePolity.parse(value, property));
                     }
                     // 延迟进行解析类设置
@@ -429,9 +430,9 @@ public abstract class AbstractConfigurator {
 
         BeanDescriptor<?> bd = BeanDescriptor.getBeanDescriptor(constant.getClass());
         ConstantClassDescription constantClassDescription = new ConstantClassDescription(constant.getClass().getName(),
-                bd.getAnnotation(ConstantClass.class).value(), constant.getClass());
+            bd.getAnnotation(ConstantClass.class).value(), constant.getClass());
 
-        for (BeanProperty<?> property : bd.findBeanPropertys(new BeanPropertyAnnotationMatcher(Constant.class))) {
+        for (BeanProperty<?, ?> property : bd.findBeanPropertys(new BeanPropertyAnnotationMatcher(Constant.class))) {
             String value = null;
 
             if (parsedProperty.hasProperty(property.getOwnerType().getName(), property.getName())) {
@@ -440,18 +441,19 @@ public abstract class AbstractConfigurator {
                 if (onMerge) {
                     if (parsePolity != null && parsePolity.canParse(value)) {
                         logger.trace("使用解析策略设置值 {}.{} -> {}",
-                                new Object[] { property.getOwnerType().getName(), property.getName(), value });
+                            new Object[] { property.getOwnerType().getName(), property.getName(), value });
                         property.setValueForce(constant, parsePolity.parse(value, property));
                     }
                 }
                 // 延迟进行解析类设置
                 logger.trace("{}.{} -> {} 从策略缓存中读取设置",
-                        new Object[] { property.getOwnerType().getName(), property.getName(), value });
+                    new Object[] { property.getOwnerType().getName(), property.getName(), value });
             } else {
                 Object v = property.getValue(constant);
                 if (v != null) {
                     try {
-                        value = beanPropertyConversion.sourceToTarget(v, (BeanProperty<Object>) property);
+                        value = beanPropertyConversion.sourceToTarget(v, (BeanProperty<?, Object>) property,
+                            String.class);
                     } catch (Exception e) {
                         if (v.getClass().isArray()) {
                             value = ArrayUtils.toString(v);
@@ -464,7 +466,7 @@ public abstract class AbstractConfigurator {
                 }
             }
             ConstantDescription constantDescription = new ConstantDescription(property.getName(),
-                    property.getAnnotation(Constant.class).value(), value, constantClassDescription);
+                property.getAnnotation(Constant.class).value(), value, constantClassDescription);
             constantClassDescription.addConstantDescription(constantDescription);
         }
         constantPool.addConstant(constant, constantClassDescription);
@@ -480,7 +482,7 @@ public abstract class AbstractConfigurator {
     protected void check(Class<?> constantType) {
         BeanDescriptor<?> bd = BeanDescriptor.getBeanDescriptor(constantType);
         String className = constantType.getName();
-        for (BeanProperty<?> property : bd.getBeanProperties()) {
+        for (BeanProperty<?, ?> property : bd.getBeanProperties()) {
             String name = property.getName();
             if (property.isWritable()) {
                 throw new ConstantException(String.format("常量配置类%s的属性%s不是只读，请去掉set方法", className, name));
@@ -488,10 +490,10 @@ public abstract class AbstractConfigurator {
             Constant constantAnnotation = property.getAnnotation(Constant.class);
             if (constantAnnotation == null) {
                 throw new ConstantException(
-                        String.format("常量配置类%s的属性%s没有被@%s注解修饰", className, name, Constant.class.getSimpleName()));
+                    String.format("常量配置类%s的属性%s没有被@%s注解修饰", className, name, Constant.class.getSimpleName()));
             } else if (org.apache.commons.lang3.StringUtils.isBlank(constantAnnotation.value())) {
                 throw new ConstantException(
-                        String.format("常量配置类%s的属性%s注解@%s的描述为空", className, name, Constant.class.getSimpleName()));
+                    String.format("常量配置类%s的属性%s注解@%s的描述为空", className, name, Constant.class.getSimpleName()));
             }
         }
     }

@@ -1,3 +1,17 @@
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenLocal()
+        maven {
+            url = "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/"
+        }
+        maven {
+            url = "https://maven.aliyun.com/repository/public"
+        }
+        mavenCentral()
+    }
+}
+
 rootProject.name = 'featherfly-constant-test'
 includeFlat 'featherfly-constant-core'
 includeFlat 'featherfly-constant-spring'

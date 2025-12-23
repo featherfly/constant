@@ -1,0 +1,27 @@
+apply plugin: 'java-library'
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = sourceVersion  
+    targetCompatibility = targetVersion
+    
+    options.encoding = "UTF-8"
+    options.compilerArgs << "-parameters"
+    //options.compilerArgs << "-verbose"
+    int runJdkVersion = Integer.parseInt(ant.properties['java.version'].split("\\.")[0])
+    if (runJdkVersion > 8) {
+        options.release.set(Integer.parseInt(targetVersion))
+    }
+}
+tasks.withType(Javadoc) {
+    options.encoding = "UTF-8"
+    options.locale = "en"
+}
+
+jar {
+    manifest.attributes 'Build-Name': archivesBaseName
+    manifest.attributes 'Build-By': "zhong ji"
+    manifest.attributes 'Build-Tool' : "gradle " + gradle.gradleVersion
+    manifest.attributes 'Build-Jdk' : ant.properties['java.runtime.version']
+    manifest.attributes 'Java-Version' : targetVersion
+    manifest.attributes 'Bundle-License': 'http://www.apache.org/licenses/LICENSE-2.0'
+}
